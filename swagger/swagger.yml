@@ -1,0 +1,36 @@
+swagger: "2.0"
+info:
+  title: "Library"
+  version: "0.0.1"
+produces:
+  - application/json
+consumes:
+  - application/json
+schemes:
+  - http
+paths:
+  /book:
+    post:
+      summary: "request a book be added to the library"
+
+      parameters:
+        - in: body
+          name: book
+          schema:
+            $ref: '#/definitions/Book'
+
+      responses:
+        '201':
+          description: Created
+
+definitions:
+    Book:
+      description: A JSON object containing book information
+      type: object
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        
+        

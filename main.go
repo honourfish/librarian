@@ -2,14 +2,24 @@ package main
 
 import (
 	//"fmt"
-	"time"
+	"log"
 
 	//"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	//"go.mongodb.org/mongo-driver/mongo/readpref"
 
-	"librarian/librarian"
-	"librarian/librarian/interfaces"
+
+	// swagger stuff
+	"github.com/go-openapi/loads"
+	"github.com/go-openapi/runtime/middleware"
+	//"github.com/go-openapi/swag"
+
+	//"librarian/swagger/models"
+	"librarian/swagger/restapi"
+	"librarian/swagger/restapi/operations"
+
+	"librarian/library"
+	"librarian/handlers"
 )
 
 
@@ -18,32 +28,38 @@ type FooBar struct {
 	Foo string `bson:"foo,omitempty"`
 }
 
+// handlePostBook is the handler for post request for the endpoint /book
+func handlePostBook(params operations.PostBookParams) middleware.Responder {
+	log.Println(params.Book.Title)
+	return operations.NewPostBookCreated()
+}
+
 func main() {
 
-	mongoDb := &librarian.MongoDB{
-		Timeout: 10,
+	mongoDb := &library.MongoDB{
+		Timeout: 3,
 		URI: "mongodb://root:example@localhost:27017",	
 	}
 
-	var persist persister.Persister = mongoDb
-	var bookPersister persister.BookPersister = mongoDb
-
-	err := persist.InitPersister()
-	if err != nil {
-		panic(err)
-	}
-	defer persist.ClosePersister()
-
-	book := librarian.Book{
-		Title: "Moby Prejedice",
-		Author: "bebop",
-		PublishDate: time.Now(),
+	// do the server stuff
+	var swaggerSpec *loads.Document
+	var err error
+	if swaggerSpec, err = loads.Analyzed(restapi.SwaggerJSON, ""); err != nil {
+		log.Fatalln(err)
 	}
 
-	err = bookPersister.AddBook(book)
+	// create a new API which can be used to create a server
+	api := operations.NewLibraryAPI(swaggerSpec)
 
-	if err != nil {
-		panic(err)
+	server := restapi.NewServer(api)
+	defer server.Shutdown()
+
+	server.Port = 8082
+
+	bookHandler := handlers.BookHandler{BookPersister: mongoDb}
+	api.PostBookHandler = operations.PostBookHandlerFunc(bookHandler.HandlePostBook)
+
+	if err = server.Serve(); err != nil {
+		log.Fatalln(err)
 	}
-
 }

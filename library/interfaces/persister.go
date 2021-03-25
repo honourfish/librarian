@@ -3,7 +3,7 @@ package persister
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"librarian/librarian"
+	"librarian/library"
 )
 
 type Persister interface {
@@ -16,12 +16,16 @@ type Persister interface {
 
 }
 
+//type LibrarianPersister interface {
+//	AddLibrarian(librarian)
+//}
+
 type BookPersister interface {
 	// AddBook persists a given book.
-	AddBook(book librarian.Book) error
+	AddBook(book library.Book) error
 
 	// GetBook gets a book from persistent storage.
-	GetBook(id primitive.ObjectID) (librarian.Book, error)
+	GetBook(id primitive.ObjectID) (library.Book, error)
 
 	// DeleteBook delets a persisted book.
 	//DeleteBook(id primitive.ObjectID) error
