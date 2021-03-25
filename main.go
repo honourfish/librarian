@@ -22,18 +22,6 @@ import (
 	"librarian/handlers"
 )
 
-
-type FooBar struct {
-	ID primitive.ObjectID `bson:"_id,omitempty"`
-	Foo string `bson:"foo,omitempty"`
-}
-
-// handlePostBook is the handler for post request for the endpoint /book
-func handlePostBook(params operations.PostBookParams) middleware.Responder {
-	log.Println(params.Book.Title)
-	return operations.NewPostBookCreated()
-}
-
 func main() {
 
 	mongoDb := &library.MongoDB{
