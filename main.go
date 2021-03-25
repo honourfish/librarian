@@ -4,17 +4,9 @@ import (
 	//"fmt"
 	"log"
 
-	//"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	//"go.mongodb.org/mongo-driver/mongo/readpref"
-
 
 	// swagger stuff
 	"github.com/go-openapi/loads"
-	"github.com/go-openapi/runtime/middleware"
-	//"github.com/go-openapi/swag"
-
-	//"librarian/swagger/models"
 	"librarian/swagger/restapi"
 	"librarian/swagger/restapi/operations"
 
