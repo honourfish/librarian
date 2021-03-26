@@ -23,6 +23,14 @@ then generate the server:
 swagger generate server --target=./swagger --spec=./swagger/swagger.yml --exclude-main --name library
 ```
 
+## Generate Client
+
+to generate the client run:
+
+```
+swagger generate client --target=./client --spec=./swagger/swagger.yml --name library
+```
+
 ## Manual testing
 
 Post:

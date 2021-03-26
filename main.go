@@ -7,6 +7,7 @@ import (
 
 	// swagger stuff
 	"github.com/go-openapi/loads"
+	
 	"librarian/swagger/restapi"
 	"librarian/swagger/restapi/operations"
 
@@ -35,7 +36,7 @@ func main() {
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 
-	server.Port = 8082
+	server.Port = 8080
 
 	bookHandler := handlers.BookHandler{Persister: mongoDb}
 
