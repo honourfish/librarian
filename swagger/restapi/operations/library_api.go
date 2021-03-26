@@ -45,8 +45,14 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		GetBookHandler: GetBookHandlerFunc(func(params GetBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetBook has not yet been implemented")
 		}),
+		GetBookTitleHandler: GetBookTitleHandlerFunc(func(params GetBookTitleParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetBookTitle has not yet been implemented")
+		}),
 		PostBookHandler: PostBookHandlerFunc(func(params PostBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation PostBook has not yet been implemented")
+		}),
+		PutBookTitleHandler: PutBookTitleHandlerFunc(func(params PutBookTitleParams) middleware.Responder {
+			return middleware.NotImplemented("operation PutBookTitle has not yet been implemented")
 		}),
 	}
 }
@@ -86,8 +92,12 @@ type LibraryAPI struct {
 
 	// GetBookHandler sets the operation handler for the get book operation
 	GetBookHandler GetBookHandler
+	// GetBookTitleHandler sets the operation handler for the get book title operation
+	GetBookTitleHandler GetBookTitleHandler
 	// PostBookHandler sets the operation handler for the post book operation
 	PostBookHandler PostBookHandler
+	// PutBookTitleHandler sets the operation handler for the put book title operation
+	PutBookTitleHandler PutBookTitleHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -168,8 +178,14 @@ func (o *LibraryAPI) Validate() error {
 	if o.GetBookHandler == nil {
 		unregistered = append(unregistered, "GetBookHandler")
 	}
+	if o.GetBookTitleHandler == nil {
+		unregistered = append(unregistered, "GetBookTitleHandler")
+	}
 	if o.PostBookHandler == nil {
 		unregistered = append(unregistered, "PostBookHandler")
+	}
+	if o.PutBookTitleHandler == nil {
+		unregistered = append(unregistered, "PutBookTitleHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -263,10 +279,18 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/book"] = NewGetBook(o.context, o.GetBookHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/book/{title}"] = NewGetBookTitle(o.context, o.GetBookTitleHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/book"] = NewPostBook(o.context, o.PostBookHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/book/{title}"] = NewPutBookTitle(o.context, o.PutBookTitleHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -65,3 +65,52 @@ func (bh *BookHandler) HandleGetBook(params operations.GetBookParams) middleware
 	log.Println(responseBook.Title)
 	return operations.NewGetBookOK().WithPayload(responseBook)
 }
+
+// handleGetBookTitle is the handler for get request for the endpoint /book/{title}
+func (bh *BookHandler) HandleGetBookTitle(params operations.GetBookTitleParams) middleware.Responder {
+
+	filter := bson.D{{"title", params.Title}}
+
+	log.Println(params.Title)
+
+	result, err := bh.Persister.Retrieve("books", filter)
+	if err != nil {
+		log.Println(err)
+		return operations.NewGetBookTitleOK()
+	}
+
+	var book library.Book
+	if err = result.(*mongo.SingleResult).Decode(&book); err != nil {
+		log.Println(err)
+		return operations.NewGetBookTitleOK()
+	}
+
+	responseBook := &models.Book{
+		Title: book.Title,
+		Author: book.Author,
+	}
+
+	log.Println(responseBook.Title)
+	return operations.NewGetBookTitleOK().WithPayload(responseBook)
+}
+
+// handlePutBookTitle is the handler for put request for the endpoint /book/{title}
+func (bh *BookHandler) HandlePutBookTitle(params operations.PutBookTitleParams) middleware.Responder {
+
+	filter := bson.D{{"title", params.Title}}
+
+	book := &library.Book{
+		Title: params.Book.Title,
+		Author: params.Book.Author,
+		PublishDate: time.Now(),
+	}
+
+	log.Println(params.Title)
+
+	if err := bh.Persister.Update("books", filter, book); err != nil {
+		log.Println(err)
+		return operations.NewPutBookTitleOK()
+	}
+
+	return operations.NewPutBookTitleOK()
+}

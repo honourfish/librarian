@@ -70,6 +70,50 @@ func init() {
           }
         }
       }
+    },
+    "/book/{title}": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "request a book be updated",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -137,6 +181,50 @@ func init() {
         "responses": {
           "201": {
             "description": "Created"
+          }
+        }
+      }
+    },
+    "/book/{title}": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "request a book be updated",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
           }
         }
       }

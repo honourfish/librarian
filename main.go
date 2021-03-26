@@ -38,8 +38,14 @@ func main() {
 	server.Port = 8082
 
 	bookHandler := handlers.BookHandler{Persister: mongoDb}
+
+	// /book handlers
 	api.PostBookHandler = operations.PostBookHandlerFunc(bookHandler.HandlePostBook)
 	api.GetBookHandler = operations.GetBookHandlerFunc(bookHandler.HandleGetBook)
+
+	// /book/{title} handlers
+	api.GetBookTitleHandler = operations.GetBookTitleHandlerFunc(bookHandler.HandleGetBookTitle)
+	api.PutBookTitleHandler = operations.PutBookTitleHandlerFunc(bookHandler.HandlePutBookTitle)
 
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)

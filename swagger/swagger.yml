@@ -9,6 +9,7 @@ consumes:
 schemes:
   - http
 paths:
+
   /book:
     post:
       summary: "request a book be added to the library"
@@ -22,7 +23,7 @@ paths:
       responses:
         '201':
           description: Created
-    
+
     get:
       summary: "request a book by its title"
 
@@ -31,6 +32,39 @@ paths:
           name: title
           required: true
           type: string
+
+      responses:
+        '200':
+          description: Retrieved
+          schema:
+            $ref: '#/definitions/Book'
+
+  /book/{title}:
+    put:
+      summary: "request a book be updated"
+
+      parameters:
+        - in: body
+          name: book
+          schema:
+            $ref: '#/definitions/Book'
+        - in: path
+          name: title
+          type: string
+          required: true
+
+      responses:
+        '200':
+          description: Updated
+
+    get:
+      summary: "request a book by its title"
+
+      parameters:
+        - in: path
+          name: title
+          type: string
+          required: true
 
       responses:
         '200':

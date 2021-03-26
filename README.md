@@ -28,6 +28,14 @@ Get:
 ```
 curl --request GET --header "Content-Type: application/json" localhost:8082/book?title=hp
 ```
+```
+curl --request GET --header "Content-Type: application/json" localhost:8082/book/{title}
+```
+
+Put:
+```
+curl --request PUT --header "Content-Type: application/json" --data '{"title":"hp","author":"jkrowling"}' localhost:8082/book/{title}
+```
 
 then generate the server:
 
