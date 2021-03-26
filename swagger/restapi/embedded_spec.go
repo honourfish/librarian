@@ -34,6 +34,25 @@ func init() {
   },
   "paths": {
     "/book": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        }
+      },
       "post": {
         "summary": "request a book be added to the library",
         "parameters": [
@@ -85,6 +104,25 @@ func init() {
   },
   "paths": {
     "/book": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          }
+        }
+      },
       "post": {
         "summary": "request a book be added to the library",
         "parameters": [

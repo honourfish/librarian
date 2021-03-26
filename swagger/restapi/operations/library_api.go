@@ -42,6 +42,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		GetBookHandler: GetBookHandlerFunc(func(params GetBookParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetBook has not yet been implemented")
+		}),
 		PostBookHandler: PostBookHandlerFunc(func(params PostBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation PostBook has not yet been implemented")
 		}),
@@ -81,6 +84,8 @@ type LibraryAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
+	// GetBookHandler sets the operation handler for the get book operation
+	GetBookHandler GetBookHandler
 	// PostBookHandler sets the operation handler for the post book operation
 	PostBookHandler PostBookHandler
 
@@ -160,6 +165,9 @@ func (o *LibraryAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.GetBookHandler == nil {
+		unregistered = append(unregistered, "GetBookHandler")
+	}
 	if o.PostBookHandler == nil {
 		unregistered = append(unregistered, "PostBookHandler")
 	}
@@ -251,6 +259,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/book"] = NewGetBook(o.context, o.GetBookHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

@@ -19,6 +19,7 @@ func main() {
 	mongoDb := &library.MongoDB{
 		Timeout: 3,
 		URI: "mongodb://root:example@localhost:27017",	
+		Database: "library",
 	}
 
 	// do the server stuff
@@ -36,8 +37,9 @@ func main() {
 
 	server.Port = 8082
 
-	bookHandler := handlers.BookHandler{BookPersister: mongoDb}
+	bookHandler := handlers.BookHandler{Persister: mongoDb}
 	api.PostBookHandler = operations.PostBookHandlerFunc(bookHandler.HandlePostBook)
+	api.GetBookHandler = operations.GetBookHandlerFunc(bookHandler.HandleGetBook)
 
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)
