@@ -50,6 +50,25 @@ func aLibraryWithNoBooks() error {
 	return nil
 }
 
+func theBookIsUpdatedWithNewTitle(title string) (err error) {
+	// use default constuctor to set the default request timeout
+	params := operations.NewPutBookTitleParams()
+
+	// set the search filter title to be the old title
+	params.Title = Book.Title
+
+	// update the new title
+	Book.Title = title
+	params.Book = Book
+
+	//var response *operations.PostBookCreated
+	if _, err = HttpClient.Operations.PutBookTitle(params); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func theBookCanBeRetrieved() error {
 	// use default constuctor to set the default request timeout
 	params := operations.NewGetBookTitleParams()
@@ -102,4 +121,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a book is added with title "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
 	ctx.Step(`^a library with no books$`, aLibraryWithNoBooks)
 	ctx.Step(`^the book can be retrieved$`, theBookCanBeRetrieved)
+	ctx.Step(`^a library with book titled "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
+	ctx.Step(`^the book is updated with new title "([^"]*)"$`, theBookIsUpdatedWithNewTitle)
+	ctx.Step(`^the updated book can be retrieved$`, theBookCanBeRetrieved)
 }
