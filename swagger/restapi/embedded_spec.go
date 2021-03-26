@@ -113,6 +113,22 @@ func init() {
             "description": "Updated"
           }
         }
+      },
+      "delete": {
+        "summary": "delete a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
       }
     }
   },
@@ -225,6 +241,22 @@ func init() {
         "responses": {
           "200": {
             "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
           }
         }
       }

@@ -72,6 +72,19 @@ paths:
           schema:
             $ref: '#/definitions/Book'
 
+    delete:
+      summary: "delete a book by its title"
+
+      parameters:
+        - in: path
+          name: title
+          type: string
+          required: true
+
+      responses:
+        '200':
+          description: Deleted
+
 definitions:
     Book:
       description: A JSON object containing book information

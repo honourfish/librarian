@@ -46,6 +46,7 @@ func main() {
 	// /book/{title} handlers
 	api.GetBookTitleHandler = operations.GetBookTitleHandlerFunc(bookHandler.HandleGetBookTitle)
 	api.PutBookTitleHandler = operations.PutBookTitleHandlerFunc(bookHandler.HandlePutBookTitle)
+	api.DeleteBookTitleHandler = operations.DeleteBookTitleHandlerFunc(bookHandler.HandleDeleteBookTitle)
 
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)

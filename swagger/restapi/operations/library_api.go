@@ -42,6 +42,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
+		DeleteBookTitleHandler: DeleteBookTitleHandlerFunc(func(params DeleteBookTitleParams) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteBookTitle has not yet been implemented")
+		}),
 		GetBookHandler: GetBookHandlerFunc(func(params GetBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetBook has not yet been implemented")
 		}),
@@ -90,6 +93,8 @@ type LibraryAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
+	// DeleteBookTitleHandler sets the operation handler for the delete book title operation
+	DeleteBookTitleHandler DeleteBookTitleHandler
 	// GetBookHandler sets the operation handler for the get book operation
 	GetBookHandler GetBookHandler
 	// GetBookTitleHandler sets the operation handler for the get book title operation
@@ -175,6 +180,9 @@ func (o *LibraryAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.DeleteBookTitleHandler == nil {
+		unregistered = append(unregistered, "DeleteBookTitleHandler")
+	}
 	if o.GetBookHandler == nil {
 		unregistered = append(unregistered, "GetBookHandler")
 	}
@@ -275,6 +283,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/book/{title}"] = NewDeleteBookTitle(o.context, o.DeleteBookTitleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

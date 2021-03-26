@@ -9,12 +9,18 @@ To run the service:
 $> docker-compose -f service.yml up
 ```
 
-## Generate Models
+## Generate Server
 
 use swagger to first validate the config:
 
 ```
 $> swagger validate ./swagger/swagger.yml
+```
+
+then generate the server:
+
+```
+swagger generate server --target=./swagger --spec=./swagger/swagger.yml --exclude-main --name library
 ```
 
 ## Manual testing
@@ -37,8 +43,8 @@ Put:
 curl --request PUT --header "Content-Type: application/json" --data '{"title":"hp","author":"jkrowling"}' localhost:8082/book/{title}
 ```
 
-then generate the server:
+Delete:
+```
+curl --request DELETE --header "Content-Type: application/json" localhost:8082/book/{title}
+```
 
-```
-swagger generate server --target=./swagger --spec=./swagger/swagger.yml --exclude-main --name library
-```

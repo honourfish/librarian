@@ -114,3 +114,18 @@ func (bh *BookHandler) HandlePutBookTitle(params operations.PutBookTitleParams) 
 
 	return operations.NewPutBookTitleOK()
 }
+
+// handleDeleteBookTitle is the handler for delete request for the endpoint /book/{title}
+func (bh *BookHandler) HandleDeleteBookTitle(params operations.DeleteBookTitleParams) middleware.Responder {
+
+	filter := bson.D{{"title", params.Title}}
+
+	log.Println(params.Title)
+
+	if err := bh.Persister.Delete("books", filter); err != nil {
+		log.Println(err)
+		return operations.NewDeleteBookTitleOK()
+	}
+
+	return operations.NewDeleteBookTitleOK()
+}
