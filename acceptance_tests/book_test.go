@@ -127,4 +127,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the updated book can be retrieved$`, theBookCanBeRetrieved)
 	ctx.Step(`^a book is added with title "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
 	ctx.Step(`^the book has (\d+) copies$`, theBookHasCopies)
+	ctx.Step(`^a library with book "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
+	ctx.Step(`^(\d+) more copies of the book are added$`, moreCopiesOfTheBookAreAdded)
 }
