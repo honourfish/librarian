@@ -1,15 +1,22 @@
 package library
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
+	"go.mongodb.org/mongo-driver/mongo"
+
 	"github.com/jinzhu/copier"
 
 	"librarian/library/data"
 	"librarian/library/mocks"
+)
+
+var (
+	MockErr error = fmt.Errorf("mock error")
 )
 
 // TestAddBook tests Librarian.AddBook in the following ways:
@@ -39,25 +46,123 @@ func TestAddBook(t *testing.T){
 		expected error
 	}{
 		{
-			"senior successful",
+			"senior create successful",
 			Librarian{
 				Name: "Janice",
 				Role: "Senior",
 				Persister: &mocks.MockPersister{},
 			},
-			"Harry Potter",
-			"J.K. Rowling",
-			5,
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
+
+			data.Book{},
+			nil, // create error
+			mongo.ErrNoDocuments, // retrieve error
+			nil, // update error
+
+			// expected error
+			nil,
+		},
+		{
+			"senior update successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
 
 			data.Book{
 				Title: "Harry Potter",
 				Author: "J.K. Rowling",
+				Copies: 5,
 			},
+			nil, // create error
+			nil, // retrieve error
+			nil, // update error
+
+			// expected error
 			nil,
-			nil,
-			nil,
-			nil,
-		}, // data goes here
+		},
+		{
+			"senior retrieve error",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
+
+			data.Book{},
+			nil, // create error
+			MockErr, // retrieve error
+			nil, // update error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"senior create error",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
+
+			data.Book{},
+			MockErr, // create error
+			mongo.ErrNoDocuments, // retrieve error
+			nil, // update error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"senior update error",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
+
+			data.Book{},
+			nil, // create error
+			nil, // retrieve error
+			MockErr, // update error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"librarian denied",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			5, // stock
+
+			data.Book{},
+			nil, // create error
+			nil, // retrieve error
+			nil, // update error
+
+			// expected error
+			&PermissionDeniedError{Role: "Librarian"},
+		},
 	}
 
 	for _, table := range tables {
