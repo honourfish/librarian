@@ -17,10 +17,12 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/hashicorp/go-memdb v1.3.2 // indirect
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/jinzhu/copier v0.2.8
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cobra v1.1.3 // indirect
+	github.com/stretchr/objx v0.2.0
 	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.5.0
 	golang.org/x/mod v0.4.2 // indirect

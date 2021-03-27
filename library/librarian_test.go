@@ -4,9 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	//"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/mock"
+
+	"github.com/jinzhu/copier"
 
 	"librarian/library/data"
+	"librarian/library/mocks"
 )
 
 // TestAddBook tests Librarian.AddBook in the following ways:
@@ -22,7 +25,9 @@ func TestAddBook(t *testing.T){
 	tables := []struct {
 		subtest string
 		librarian Librarian
-		book data.Book
+		title string
+		author string
+		stock int
 
 		// Persister stuff
 		retrieve_book data.Book
@@ -30,19 +35,48 @@ func TestAddBook(t *testing.T){
 		create_err error
 		retrieve_err error
 		update_err error
+
+		expected error
 	}{
-		{}, // data goes here
+		{
+			"senior successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter",
+			"J.K. Rowling",
+			5,
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+			},
+			nil,
+			nil,
+			nil,
+			nil,
+		}, // data goes here
 	}
 
 	for _, table := range tables {
 		t.Run(table.subtest, func(t *testing.T) {
 
 			// assume we have passed a mock persister to librarian
-			//table.librarian.Persister.On("Create", "books" table.book).Return(nil)
-			
+			table.librarian.Persister.(*mocks.MockPersister).On("Create", "books", mock.Anything).Return(table.create_err)
+	
+			table.librarian.Persister.(*mocks.MockPersister).On("Update", "books", mock.Anything, mock.Anything).Return(table.update_err)
+
 			// mock persister retrieve, to return table.retrieve_book in as the result arg
-			//table.librarian.Persister.On("Retrieve", "books", mock.AnythingOfType("interface{}"), mock.AnythingOfType("interface{}")).Return(table.retrieve_err).Run(func(args Arguments){args["result"] = &table.retrieve_book})
-			assert.Nil(nil, "")
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "books", mock.Anything, mock.Anything).Return(table.retrieve_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.Book)
+				copier.Copy(arg, &table.retrieve_book)
+			})
+
+			actual := table.librarian.AddBooks(table.title, table.author, table.stock)
+
+			assert.Equal(t, actual, table.expected, "error returned not the same as eexpppected")
 		})
 	}
 
