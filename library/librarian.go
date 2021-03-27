@@ -68,6 +68,18 @@ func (l *Librarian) addBook(book data.Book) (err error) {
 	return err
 }
 
+// removeBook removes a book found with a filter on the title and author.
+func (l *Librarian) removeBook(title string, author string) (err error) {
+
+	filter := bson.D{{"title", title},{"author", author}}
+
+	if err = l.Persister.Delete("books", filter); err != nil {
+		return
+	}
+
+	return
+}
+
 // AddBooks adds new stock of a book to the library.
 func (l *Librarian) AddBooks(title string, author string, stock int) (err error) {
 
@@ -116,5 +128,34 @@ func (l *Librarian) RemoveBooks(title string, author string, stock int) (err err
 		err = &PermissionDeniedError{Role: l.Role}
 		return
 	}
+
+	// attempt to get the book to see if it already exists
+	var book data.Book
+	book, err = l.book(title, author)
+
+	// check we have a book to remove
+	if err != nil {
+		return
+	}
+
+	// check we have enough copies to remove
+	if (book.Copies - stock) < 0 {
+		err = &NotEnoughCopiesError{}
+		return
+	}
+
+	// if the stock is 0 then remove it
+	if (book.Copies - stock) == 0 {
+		if err = l.removeBook(title, author); err != nil {
+			return
+		}
+	}
+
+	// otherwise just reduce the number of copies accordingly
+	book.Copies -= stock
+	if err = l.updateBook(book, book); err != nil {
+		return
+	}
+	
 	return
 }

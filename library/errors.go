@@ -11,7 +11,16 @@ type PermissionDeniedError struct {
 	Role string 
 }
 
+// NotEnoughCopiesError occurs when there are not enough copies.
+type NotEnoughCopiesError struct {}
+
+
 // Error satisfies the error interface.
 func (pde *PermissionDeniedError) Error() string {
 	return fmt.Sprintf("The role: %s does not have permission for this operation.", pde.Role)
+}
+
+// Error satisfies the error interface.
+func (nece *NotEnoughCopiesError) Error() string {
+	return fmt.Sprintf("The Book does not have enough copies.")
 }
