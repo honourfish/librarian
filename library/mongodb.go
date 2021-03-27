@@ -52,13 +52,11 @@ func (mdb *MongoDB) Create(collection string, object interface{}) error {
 
 // Retrieve gets a single object from a collection, given a specific search filter.
 // The given filter can be a bson.D object.
-// Returns a *mongo.SingleResult, which can use `Decode(interface{})` to decode the result into a bson
-//   compatible object.
-func (mdb *MongoDB) Retrieve(collection string, filter interface{}) (interface{}, error) {
+func (mdb *MongoDB) Retrieve(collection string, filter interface{}, result interface{}) error {
 	// make a connection to the database
 	client, ctx, cancel, err := mdb.getContext()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer cancel()
 	defer client.Disconnect(ctx)
@@ -66,9 +64,8 @@ func (mdb *MongoDB) Retrieve(collection string, filter interface{}) (interface{}
 	database := client.Database(mdb.Database)
 	dbCollection := database.Collection(collection)
 
-	var object *mongo.SingleResult
-	object = dbCollection.FindOne(ctx, filter)
-	return object, err
+	err = dbCollection.FindOne(ctx, filter).Decode(result)
+	return err
 }
 
 // Update gets a single object from a collection, based on a given filter, then replaces it
