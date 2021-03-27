@@ -32,11 +32,15 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteBookTitle(params *DeleteBookTitleParams, opts ...ClientOption) (*DeleteBookTitleOK, error)
 
+	DeleteLibrarianUsernameBookTitleAuthor(params *DeleteLibrarianUsernameBookTitleAuthorParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorOK, error)
+
 	GetBook(params *GetBookParams, opts ...ClientOption) (*GetBookOK, error)
 
 	GetBookTitle(params *GetBookTitleParams, opts ...ClientOption) (*GetBookTitleOK, error)
 
 	PostBook(params *PostBookParams, opts ...ClientOption) (*PostBookCreated, error)
+
+	PostLibrarianUsernameBook(params *PostLibrarianUsernameBookParams, opts ...ClientOption) (*PostLibrarianUsernameBookCreated, error)
 
 	PutBookTitle(params *PutBookTitleParams, opts ...ClientOption) (*PutBookTitleOK, error)
 
@@ -78,6 +82,44 @@ func (a *Client) DeleteBookTitle(params *DeleteBookTitleParams, opts ...ClientOp
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteBookTitle: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  DeleteLibrarianUsernameBookTitleAuthor deletes a book by its title author
+*/
+func (a *Client) DeleteLibrarianUsernameBookTitleAuthor(params *DeleteLibrarianUsernameBookTitleAuthorParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteLibrarianUsernameBookTitleAuthorParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteLibrarianUsernameBookTitleAuthor",
+		Method:             "DELETE",
+		PathPattern:        "/librarian/{username}/book/{title}/{author}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteLibrarianUsernameBookTitleAuthorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteLibrarianUsernameBookTitleAuthorOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteLibrarianUsernameBookTitleAuthor: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -192,6 +234,44 @@ func (a *Client) PostBook(params *PostBookParams, opts ...ClientOption) (*PostBo
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostBook: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostLibrarianUsernameBook requests a book be added to the library
+*/
+func (a *Client) PostLibrarianUsernameBook(params *PostLibrarianUsernameBookParams, opts ...ClientOption) (*PostLibrarianUsernameBookCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostLibrarianUsernameBookParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostLibrarianUsernameBook",
+		Method:             "POST",
+		PathPattern:        "/librarian/{username}/book",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PostLibrarianUsernameBookReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostLibrarianUsernameBookCreated)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostLibrarianUsernameBook: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -25,7 +25,7 @@ func (a *asserter) Errorf(format string, args ...interface{}) {
 // Globals can be shared between steps
 var HttpClient *client.Library
 var Book *models.Book
-var t *asserter
+var t asserter
 
 func aBookIsAddedWithTitleAndAuthor(title, author string) (err error) {
 	// use default constuctor to set the default request timeout
@@ -80,7 +80,7 @@ func theBookCanBeRetrieved() error {
 		return err
 	}
 
-	assert.Equal(t, *response.Payload, *Book, "expected book and actual book are different")
+	assert.Equal(&t, *response.Payload, *Book, "expected book and actual book are different")
 	return nil
 }
 
@@ -120,8 +120,11 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.Step(`^a book is added with title "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
 	ctx.Step(`^a library with no books$`, aLibraryWithNoBooks)
+	ctx.Step(`^a "([^"]*)" librarian with username "([^"]*)"$`, aLibrarianWithUsername)
 	ctx.Step(`^the book can be retrieved$`, theBookCanBeRetrieved)
 	ctx.Step(`^a library with book titled "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
 	ctx.Step(`^the book is updated with new title "([^"]*)"$`, theBookIsUpdatedWithNewTitle)
 	ctx.Step(`^the updated book can be retrieved$`, theBookCanBeRetrieved)
+	ctx.Step(`^a book is added with title "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
+	ctx.Step(`^the book has (\d+) copies$`, theBookHasCopies)
 }

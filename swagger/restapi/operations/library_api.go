@@ -45,6 +45,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		DeleteBookTitleHandler: DeleteBookTitleHandlerFunc(func(params DeleteBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteBookTitle has not yet been implemented")
 		}),
+		DeleteLibrarianUsernameBookTitleAuthorHandler: DeleteLibrarianUsernameBookTitleAuthorHandlerFunc(func(params DeleteLibrarianUsernameBookTitleAuthorParams) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteLibrarianUsernameBookTitleAuthor has not yet been implemented")
+		}),
 		GetBookHandler: GetBookHandlerFunc(func(params GetBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetBook has not yet been implemented")
 		}),
@@ -53,6 +56,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		}),
 		PostBookHandler: PostBookHandlerFunc(func(params PostBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation PostBook has not yet been implemented")
+		}),
+		PostLibrarianUsernameBookHandler: PostLibrarianUsernameBookHandlerFunc(func(params PostLibrarianUsernameBookParams) middleware.Responder {
+			return middleware.NotImplemented("operation PostLibrarianUsernameBook has not yet been implemented")
 		}),
 		PutBookTitleHandler: PutBookTitleHandlerFunc(func(params PutBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation PutBookTitle has not yet been implemented")
@@ -95,12 +101,16 @@ type LibraryAPI struct {
 
 	// DeleteBookTitleHandler sets the operation handler for the delete book title operation
 	DeleteBookTitleHandler DeleteBookTitleHandler
+	// DeleteLibrarianUsernameBookTitleAuthorHandler sets the operation handler for the delete librarian username book title author operation
+	DeleteLibrarianUsernameBookTitleAuthorHandler DeleteLibrarianUsernameBookTitleAuthorHandler
 	// GetBookHandler sets the operation handler for the get book operation
 	GetBookHandler GetBookHandler
 	// GetBookTitleHandler sets the operation handler for the get book title operation
 	GetBookTitleHandler GetBookTitleHandler
 	// PostBookHandler sets the operation handler for the post book operation
 	PostBookHandler PostBookHandler
+	// PostLibrarianUsernameBookHandler sets the operation handler for the post librarian username book operation
+	PostLibrarianUsernameBookHandler PostLibrarianUsernameBookHandler
 	// PutBookTitleHandler sets the operation handler for the put book title operation
 	PutBookTitleHandler PutBookTitleHandler
 
@@ -183,6 +193,9 @@ func (o *LibraryAPI) Validate() error {
 	if o.DeleteBookTitleHandler == nil {
 		unregistered = append(unregistered, "DeleteBookTitleHandler")
 	}
+	if o.DeleteLibrarianUsernameBookTitleAuthorHandler == nil {
+		unregistered = append(unregistered, "DeleteLibrarianUsernameBookTitleAuthorHandler")
+	}
 	if o.GetBookHandler == nil {
 		unregistered = append(unregistered, "GetBookHandler")
 	}
@@ -191,6 +204,9 @@ func (o *LibraryAPI) Validate() error {
 	}
 	if o.PostBookHandler == nil {
 		unregistered = append(unregistered, "PostBookHandler")
+	}
+	if o.PostLibrarianUsernameBookHandler == nil {
+		unregistered = append(unregistered, "PostLibrarianUsernameBookHandler")
 	}
 	if o.PutBookTitleHandler == nil {
 		unregistered = append(unregistered, "PutBookTitleHandler")
@@ -287,6 +303,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/book/{title}"] = NewDeleteBookTitle(o.context, o.DeleteBookTitleHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/librarian/{username}/book/{title}/{author}"] = NewDeleteLibrarianUsernameBookTitleAuthor(o.context, o.DeleteLibrarianUsernameBookTitleAuthorHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -299,6 +319,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/book"] = NewPostBook(o.context, o.PostBookHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/librarian/{username}/book"] = NewPostLibrarianUsernameBook(o.context, o.PostLibrarianUsernameBookHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

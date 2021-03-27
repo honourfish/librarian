@@ -49,6 +49,11 @@ func main() {
 	api.PutBookTitleHandler = operations.PutBookTitleHandlerFunc(bookHandler.HandlePutBookTitle)
 	api.DeleteBookTitleHandler = operations.DeleteBookTitleHandlerFunc(bookHandler.HandleDeleteBookTitle)
 
+	// /librarian/{username}/book handlers
+	librarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
+
+	api.PostLibrarianUsernameBookHandler = operations.PostLibrarianUsernameBookHandlerFunc(librarianHandler.HandlePostBook)
+
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)
 	}

@@ -10,6 +10,46 @@ schemes:
   - http
 paths:
 
+  /librarian/{username}/book:
+    post:
+      summary: "request a book be added to the library"
+
+      parameters:
+        - in: body
+          name: book
+          schema:
+            $ref: '#/definitions/Book'
+        - in: path
+          name: username
+          type: string
+          required: true
+
+      responses:
+        '201':
+          description: Created
+
+  /librarian/{username}/book/{title}/{author}:
+    delete:
+      summary: "delete a book by its title/author"
+
+      parameters:
+        - in: path
+          name: username
+          type: string
+          required: true
+        - in: path
+          name: title
+          type: string
+          required: true
+        - in: path
+          name: author
+          type: string
+          required: true
+
+      responses:
+        '200':
+          description: Deleted
+
   /book:
     post:
       summary: "request a book be added to the library"
@@ -94,5 +134,7 @@ definitions:
           type: string
         author:
           type: string
+        copies:
+          type: integer
         
         

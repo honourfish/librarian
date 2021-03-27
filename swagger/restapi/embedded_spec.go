@@ -130,6 +130,61 @@ func init() {
           }
         }
       }
+    },
+    "/librarian/{username}/book": {
+      "post": {
+        "summary": "request a book be added to the library",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/librarian/{username}/book/{title}/{author}": {
+      "delete": {
+        "summary": "delete a book by its title/author",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "author",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -139,6 +194,9 @@ func init() {
       "properties": {
         "author": {
           "type": "string"
+        },
+        "copies": {
+          "type": "integer"
         },
         "title": {
           "type": "string"
@@ -260,6 +318,61 @@ func init() {
           }
         }
       }
+    },
+    "/librarian/{username}/book": {
+      "post": {
+        "summary": "request a book be added to the library",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Book"
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/librarian/{username}/book/{title}/{author}": {
+      "delete": {
+        "summary": "delete a book by its title/author",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "author",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -269,6 +382,9 @@ func init() {
       "properties": {
         "author": {
           "type": "string"
+        },
+        "copies": {
+          "type": "integer"
         },
         "title": {
           "type": "string"

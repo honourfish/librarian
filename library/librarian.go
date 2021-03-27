@@ -20,10 +20,13 @@ type Librarian struct {
 	// ID is the unique mongodb id.
 	ID primitive.ObjectID `bson:"_id,omitempty"`
 
-	// Title of the book.
-	Name string `bson:"title,omitempty"`
+	// Name of the librarian. Non unique
+	Name string `bson:"name,omitempty"`
 
-	// Role is the librarians role (use constant Normal or Senior)
+	// Username of the librarian. Unique
+	Username string `bson:"username,omitempty"`
+
+	// Role is the librarians role (use constant Normal or Senior).
 	Role string `bson:"role,omitempty"`
 
 	// Persister is the persister used to add users
@@ -52,7 +55,7 @@ func (l *Librarian) updateBook(old_book data.Book, new_book data.Book) (err erro
 
 	filter := bson.D{{"title", old_book.Title},{"author", old_book.Author}}
 
-	if err = l.Persister.Update("books", filter, new_book); err != nil {
+	if err = l.Persister.Update("books", filter, &new_book); err != nil {
 		return
 	}
 
@@ -61,7 +64,7 @@ func (l *Librarian) updateBook(old_book data.Book, new_book data.Book) (err erro
 
 // addBook adds a given book to persistent storage
 func (l *Librarian) addBook(book data.Book) (err error) {
-	if err = l.Persister.Create("books", book); err != nil {
+	if err = l.Persister.Create("books", &book); err != nil {
 		return err
 	}
 	

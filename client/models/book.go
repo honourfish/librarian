@@ -20,6 +20,9 @@ type Book struct {
 	// author
 	Author string `json:"author,omitempty"`
 
+	// copies
+	Copies int64 `json:"copies,omitempty"`
+
 	// title
 	Title string `json:"title,omitempty"`
 }
