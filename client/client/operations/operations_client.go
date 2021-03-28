@@ -34,13 +34,19 @@ type ClientService interface {
 
 	DeleteLibrarianUsernameBookTitleAuthorCopies(params *DeleteLibrarianUsernameBookTitleAuthorCopiesParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorCopiesOK, error)
 
+	DeleteLibrarianUsernameUserUser(params *DeleteLibrarianUsernameUserUserParams, opts ...ClientOption) (*DeleteLibrarianUsernameUserUserOK, error)
+
 	GetBook(params *GetBookParams, opts ...ClientOption) (*GetBookOK, error)
 
 	GetBookTitle(params *GetBookTitleParams, opts ...ClientOption) (*GetBookTitleOK, error)
 
+	GetLibrarianUsernameUserUser(params *GetLibrarianUsernameUserUserParams, opts ...ClientOption) (*GetLibrarianUsernameUserUserOK, error)
+
 	PostBook(params *PostBookParams, opts ...ClientOption) (*PostBookCreated, error)
 
 	PostLibrarianUsernameBook(params *PostLibrarianUsernameBookParams, opts ...ClientOption) (*PostLibrarianUsernameBookCreated, error)
+
+	PostLibrarianUsernameUser(params *PostLibrarianUsernameUserParams, opts ...ClientOption) (*PostLibrarianUsernameUserCreated, error)
 
 	PutBookTitle(params *PutBookTitleParams, opts ...ClientOption) (*PutBookTitleOK, error)
 
@@ -124,6 +130,44 @@ func (a *Client) DeleteLibrarianUsernameBookTitleAuthorCopies(params *DeleteLibr
 }
 
 /*
+  DeleteLibrarianUsernameUserUser deletes a user by their username
+*/
+func (a *Client) DeleteLibrarianUsernameUserUser(params *DeleteLibrarianUsernameUserUserParams, opts ...ClientOption) (*DeleteLibrarianUsernameUserUserOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteLibrarianUsernameUserUserParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "DeleteLibrarianUsernameUserUser",
+		Method:             "DELETE",
+		PathPattern:        "/librarian/{username}/user/{user}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteLibrarianUsernameUserUserReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteLibrarianUsernameUserUserOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for DeleteLibrarianUsernameUserUser: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   GetBook requests a book by its title
 */
 func (a *Client) GetBook(params *GetBookParams, opts ...ClientOption) (*GetBookOK, error) {
@@ -200,6 +244,44 @@ func (a *Client) GetBookTitle(params *GetBookTitleParams, opts ...ClientOption) 
 }
 
 /*
+  GetLibrarianUsernameUserUser requests a book by its title
+*/
+func (a *Client) GetLibrarianUsernameUserUser(params *GetLibrarianUsernameUserUserParams, opts ...ClientOption) (*GetLibrarianUsernameUserUserOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetLibrarianUsernameUserUserParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetLibrarianUsernameUserUser",
+		Method:             "GET",
+		PathPattern:        "/librarian/{username}/user/{user}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetLibrarianUsernameUserUserReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetLibrarianUsernameUserUserOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetLibrarianUsernameUserUser: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   PostBook requests a book be added to the library
 */
 func (a *Client) PostBook(params *PostBookParams, opts ...ClientOption) (*PostBookCreated, error) {
@@ -272,6 +354,44 @@ func (a *Client) PostLibrarianUsernameBook(params *PostLibrarianUsernameBookPara
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostLibrarianUsernameBook: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+  PostLibrarianUsernameUser requests a user be added to the library
+*/
+func (a *Client) PostLibrarianUsernameUser(params *PostLibrarianUsernameUserParams, opts ...ClientOption) (*PostLibrarianUsernameUserCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostLibrarianUsernameUserParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "PostLibrarianUsernameUser",
+		Method:             "POST",
+		PathPattern:        "/librarian/{username}/user",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PostLibrarianUsernameUserReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostLibrarianUsernameUserCreated)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for PostLibrarianUsernameUser: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

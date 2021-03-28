@@ -7,9 +7,11 @@ import (
 	"librarian/client/models"
 
 	"librarian/library"
+	"librarian/library/data"
 )
 
 var Librarian library.Librarian
+var User *data.User
 
 func aLibrarianWithUsername(role, username string) error {
 	// for now assume one exists

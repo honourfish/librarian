@@ -105,15 +105,33 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.AfterScenario(func(scenario *godog.Scenario, err error){
 
-		// delete the book after the test has run
-		params := operations.NewDeleteBookTitleParams()
+		// for now assume the first tag is book or user
+		if scenario.Tags[0].Name == "book" {
+			// delete the book after the test has run
+			params := operations.NewDeleteBookTitleParams()
 
-		params.Title = Book.Title
+			params.Title = Book.Title
 
-		if _, err = HttpClient.Operations.DeleteBookTitle(params); err != nil {
-			// something has gone wrong, either the test borked,
-			// or the cleanup failed.
-			panic(err)
+			if _, err = HttpClient.Operations.DeleteBookTitle(params); err != nil {
+				// something has gone wrong, either the test borked,
+				// or the cleanup failed.
+				panic(err)
+			}
+		}
+
+		// for now assume the first tag is book or user
+		if scenario.Tags[0].Name == "user" {
+			// delete the user after the test has run
+			params := operations.NewDeleteLibrarianUsernameUserUserParams()
+
+			params.Username = Librarian.Username
+			params.User = User.Username
+
+			if _, err = HttpClient.Operations.DeleteLibrarianUsernameUserUser(params); err != nil {
+				// something has gone wrong, either the test borked,
+				// or the cleanup failed.
+				panic(err)
+			}
 		}
 
 	})
