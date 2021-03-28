@@ -24,12 +24,12 @@ type SeniorLibrarianHandler struct {
 func (slh *SeniorLibrarianHandler) HandlePostBook(params operations.PostLibrarianUsernameBookParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := slh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewPostLibrarianUsernameBookCreated()
+		return operations.NewPostLibrarianUsernameBookNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -37,7 +37,7 @@ func (slh *SeniorLibrarianHandler) HandlePostBook(params operations.PostLibraria
 
 	if err := librarian.AddBooks(params.Book.Title, params.Book.Author, int(params.Book.Copies)); err != nil {
 		log.Println(err)
-		return operations.NewPostLibrarianUsernameBookCreated()
+		return operations.NewPostLibrarianUsernameBookNotFound()
 	}
 
 	return operations.NewPostLibrarianUsernameBookCreated()
@@ -47,12 +47,12 @@ func (slh *SeniorLibrarianHandler) HandlePostBook(params operations.PostLibraria
 func (slh *SeniorLibrarianHandler) HandleDeleteBook(params operations.DeleteLibrarianUsernameBookTitleAuthorCopiesParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := slh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()
+		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -60,7 +60,7 @@ func (slh *SeniorLibrarianHandler) HandleDeleteBook(params operations.DeleteLibr
 
 	if err := librarian.RemoveBooks(params.Title, params.Author, int(params.Copies)); err != nil {
 		log.Println(err)
-		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()
+		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesNotFound()
 	}
 
 	return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()

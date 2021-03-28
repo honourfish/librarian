@@ -34,3 +34,27 @@ func (o *PostLibrarianUsernameBookCreated) WriteResponse(rw http.ResponseWriter,
 
 	rw.WriteHeader(201)
 }
+
+// PostLibrarianUsernameBookNotFoundCode is the HTTP code returned for type PostLibrarianUsernameBookNotFound
+const PostLibrarianUsernameBookNotFoundCode int = 404
+
+/*PostLibrarianUsernameBookNotFound Not Found
+
+swagger:response postLibrarianUsernameBookNotFound
+*/
+type PostLibrarianUsernameBookNotFound struct {
+}
+
+// NewPostLibrarianUsernameBookNotFound creates PostLibrarianUsernameBookNotFound with default headers values
+func NewPostLibrarianUsernameBookNotFound() *PostLibrarianUsernameBookNotFound {
+
+	return &PostLibrarianUsernameBookNotFound{}
+}
+
+// WriteResponse to the client
+func (o *PostLibrarianUsernameBookNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(404)
+}

@@ -34,3 +34,27 @@ func (o *DeleteLibrarianUsernameBookTitleAuthorCopiesOK) WriteResponse(rw http.R
 
 	rw.WriteHeader(200)
 }
+
+// DeleteLibrarianUsernameBookTitleAuthorCopiesNotFoundCode is the HTTP code returned for type DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound
+const DeleteLibrarianUsernameBookTitleAuthorCopiesNotFoundCode int = 404
+
+/*DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound Not Found
+
+swagger:response deleteLibrarianUsernameBookTitleAuthorCopiesNotFound
+*/
+type DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound struct {
+}
+
+// NewDeleteLibrarianUsernameBookTitleAuthorCopiesNotFound creates DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound with default headers values
+func NewDeleteLibrarianUsernameBookTitleAuthorCopiesNotFound() *DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound {
+
+	return &DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound{}
+}
+
+// WriteResponse to the client
+func (o *DeleteLibrarianUsernameBookTitleAuthorCopiesNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(404)
+}

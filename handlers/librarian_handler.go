@@ -24,12 +24,12 @@ type LibrarianHandler struct {
 func (lh *LibrarianHandler) HandlePostUser(params operations.PostLibrarianUsernameUserParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewPostLibrarianUsernameUserCreated()
+		return operations.NewPostLibrarianUsernameUserNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -37,7 +37,7 @@ func (lh *LibrarianHandler) HandlePostUser(params operations.PostLibrarianUserna
 
 	if err := librarian.AddUser(params.User.Name, params.User.Username); err != nil {
 		log.Println(err)
-		return operations.NewPostLibrarianUsernameUserCreated()
+		return operations.NewPostLibrarianUsernameUserNotFound()
 	}
 
 	return operations.NewPostLibrarianUsernameUserCreated()
@@ -47,12 +47,12 @@ func (lh *LibrarianHandler) HandlePostUser(params operations.PostLibrarianUserna
 func (lh *LibrarianHandler) HandleDeleteUser(params operations.DeleteLibrarianUsernameUserUserParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewDeleteLibrarianUsernameUserUserOK()
+		return operations.NewDeleteLibrarianUsernameUserUserNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -60,7 +60,7 @@ func (lh *LibrarianHandler) HandleDeleteUser(params operations.DeleteLibrarianUs
 
 	if err := librarian.RemoveUser(params.User); err != nil {
 		log.Println(err)
-		return operations.NewDeleteLibrarianUsernameUserUserOK()
+		return operations.NewDeleteLibrarianUsernameUserUserNotFound()
 	}
 
 	return operations.NewDeleteLibrarianUsernameUserUserOK()
@@ -70,12 +70,12 @@ func (lh *LibrarianHandler) HandleDeleteUser(params operations.DeleteLibrarianUs
 func (lh *LibrarianHandler) HandleGetUser(params operations.GetLibrarianUsernameUserUserParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewGetLibrarianUsernameUserUserOK()
+		return operations.NewGetLibrarianUsernameUserUserNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -84,7 +84,7 @@ func (lh *LibrarianHandler) HandleGetUser(params operations.GetLibrarianUsername
 	user, err := librarian.User(params.User)
 	if err != nil {
 		log.Println(err)
-		return operations.NewGetLibrarianUsernameUserUserOK()
+		return operations.NewGetLibrarianUsernameUserUserNotFound()
 	}
 
 	responseUser := &models.User{
@@ -99,12 +99,12 @@ func (lh *LibrarianHandler) HandleGetUser(params operations.GetLibrarianUsername
 func (lh *LibrarianHandler) HandleGetBook(params operations.GetLibrarianUsernameBookTitleAuthorParams) middleware.Responder {
 
 	// get the librarian
-	filter := bson.D{{"username", params.Username}}
+	filter := bson.M{"username": params.Username}
 
 	var librarian library.Librarian
 	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
 		log.Println(err)
-		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+		return operations.NewGetLibrarianUsernameBookTitleAuthorNotFound()
 	}
 	
 	// ensure the librarian has a valid persister
@@ -113,14 +113,14 @@ func (lh *LibrarianHandler) HandleGetBook(params operations.GetLibrarianUsername
 	copies, checked_out, err := librarian.Stock(params.Title, params.Author)
 	if err != nil {
 		log.Println(err)
-		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+		return operations.NewGetLibrarianUsernameBookTitleAuthorNotFound()
 	}
 
 	var in_stock bool
 	in_stock, err = librarian.InStock(params.Title, params.Author)
 	if err != nil {
 		log.Println(err)
-		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+		return operations.NewGetLibrarianUsernameBookTitleAuthorNotFound()
 	}
 
 	responseBookStock := &models.BookStock{

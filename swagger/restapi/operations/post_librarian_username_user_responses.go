@@ -34,3 +34,27 @@ func (o *PostLibrarianUsernameUserCreated) WriteResponse(rw http.ResponseWriter,
 
 	rw.WriteHeader(201)
 }
+
+// PostLibrarianUsernameUserNotFoundCode is the HTTP code returned for type PostLibrarianUsernameUserNotFound
+const PostLibrarianUsernameUserNotFoundCode int = 404
+
+/*PostLibrarianUsernameUserNotFound Not Found
+
+swagger:response postLibrarianUsernameUserNotFound
+*/
+type PostLibrarianUsernameUserNotFound struct {
+}
+
+// NewPostLibrarianUsernameUserNotFound creates PostLibrarianUsernameUserNotFound with default headers values
+func NewPostLibrarianUsernameUserNotFound() *PostLibrarianUsernameUserNotFound {
+
+	return &PostLibrarianUsernameUserNotFound{}
+}
+
+// WriteResponse to the client
+func (o *PostLibrarianUsernameUserNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(404)
+}

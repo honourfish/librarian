@@ -152,6 +152,9 @@ func init() {
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -185,6 +188,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BookStock"
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -221,6 +227,9 @@ func init() {
         "responses": {
           "200": {
             "description": "Deleted"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -246,6 +255,9 @@ func init() {
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -273,6 +285,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/User"
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       },
@@ -295,6 +310,9 @@ func init() {
         "responses": {
           "200": {
             "description": "Deleted"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -480,6 +498,9 @@ func init() {
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -513,6 +534,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/BookStock"
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -549,6 +573,9 @@ func init() {
         "responses": {
           "200": {
             "description": "Deleted"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -574,6 +601,9 @@ func init() {
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -601,6 +631,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/User"
             }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       },
@@ -623,6 +656,9 @@ func init() {
         "responses": {
           "200": {
             "description": "Deleted"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }

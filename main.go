@@ -41,13 +41,11 @@ func main() {
 	bookHandler := handlers.BookHandler{Persister: mongoDb}
 
 	// /book handlers
-	api.PostBookHandler = operations.PostBookHandlerFunc(bookHandler.HandlePostBook)
-	api.GetBookHandler = operations.GetBookHandlerFunc(bookHandler.HandleGetBook)
-
-	// /book/{title} handlers
-	api.GetBookTitleHandler = operations.GetBookTitleHandlerFunc(bookHandler.HandleGetBookTitle)
-	api.PutBookTitleHandler = operations.PutBookTitleHandlerFunc(bookHandler.HandlePutBookTitle)
-	api.DeleteBookTitleHandler = operations.DeleteBookTitleHandlerFunc(bookHandler.HandleDeleteBookTitle)
+	//api.PostBookHandler = operations.PostBookHandlerFunc(bookHandler.HandlePostBook)
+	//api.GetBookHandler = operations.GetBookHandlerFunc(bookHandler.HandleGetBook)
+	//api.GetBookTitleHandler = operations.GetBookTitleHandlerFunc(bookHandler.HandleGetBookTitle)
+	//api.PutBookTitleHandler = operations.PutBookTitleHandlerFunc(bookHandler.HandlePutBookTitle)
+	api.DeleteBookTitleHandler = operations.DeleteBookTitleHandlerFunc(bookHandler.HandleDeleteBookTitle) // keep for acceptance tests
 
 	// /librarian/{username}/book handlers
 	seniorLibrarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
