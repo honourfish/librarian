@@ -1123,3 +1123,122 @@ func TestInStock(t *testing.T){
 		})
 	}
 }
+
+// TestStock tests Librarian.Stock in the following ways:
+//
+// 1. a senior librarian attempts to take stock of a book with multiple copies, but none checked out, successfully.
+// 2. a normal librarian attempts to take stock of a book with multiple copies, but none checked out, successfully.
+// 3. a normal librarian attempts to take stock of a book with multiple copies, but some checked out, successfully.
+// 4. a normal librarian attempts to take stock of a book but retrieving the book fails and returns false.
+func TestStock(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		title string
+		author string
+
+		// Persister stuff
+		retrieve_book data.Book
+
+		retrieve_book_err error
+
+		expected_copies int
+		expected_checked_out int
+		expected_err error
+	}{
+		{
+			"senior take stock successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			10,
+			0,
+			nil,
+		},
+		{
+			"normal take stock successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 7,
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			7,
+			0,
+			nil,
+		},
+		{
+			"normal take stock some checked out",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 5,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+					NewObjectID(3),
+				},
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			5,
+			2,
+			nil,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// mock persister retrieve, to return table.retrieve_book in as the result arg
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "books", mock.Anything, mock.Anything).Return(table.retrieve_book_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.Book)
+				copier.Copy(arg, &table.retrieve_book)
+			})
+
+			actual_copies, actual_checked_out, actual_err := table.librarian.Stock(table.title, table.author)
+
+			assert.Equal(t, table.expected_copies, actual_copies, "copies returned not the same as expected")
+			assert.Equal(t, table.expected_checked_out, actual_checked_out, "checked out returned not the same as expected")
+			assert.Equal(t, table.expected_err, actual_err, "error returned not the same as expected")
+		})
+	}
+}
