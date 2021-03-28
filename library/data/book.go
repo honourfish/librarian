@@ -26,13 +26,13 @@ type Book struct {
 	Copies int `bson:"copies,omitempty"`
 
 	// Users is the foreign key for users that currently have the book checked out
-	Users []*primitive.ObjectID `bson:"users,omitempty"`
+	Users []primitive.ObjectID `bson:"users,omitempty"`
 }
 
 // ContainsUser checks that the book contains a given user in its Users member.
 func (b *Book) ContainsUser(user *User) bool {
     for _, user_id := range b.Users {
-        if user.ID == *user_id {
+        if user.ID == user_id {
             return true
         }
     }
@@ -40,14 +40,14 @@ func (b *Book) ContainsUser(user *User) bool {
 }
 
 // User gets the user id from the Users slice, given the user.
-func (b *Book) User(user *User) (int, *primitive.ObjectID, error) {
+func (b *Book) User(user *User) (int, primitive.ObjectID, error) {
     for index, user_id := range b.Users {
-        if user.ID == *user_id {
+        if user.ID == user_id {
             return index, user_id, nil
         }
 	}
 	
-    return 0, nil, &errors.NotCheckedOutError{}
+    return 0, primitive.ObjectID{}, &errors.NotCheckedOutError{}
 }
 
 // RemoveUser removes a given user id from the Users slice.
@@ -62,7 +62,7 @@ func(b *Book) RemoveUser(user *User) error {
 	slice_len := len(b.Users)
 	
 	b.Users[index] = b.Users[slice_len-1] // Move indexed element to last.
-	b.Users[slice_len-1] = nil   // Erase last element.
+	b.Users[slice_len-1] = primitive.ObjectID{}   // Erase last element.
 	b.Users = b.Users[:slice_len-1]   // Truncate slice.
 
 	return nil

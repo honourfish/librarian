@@ -21,6 +21,13 @@ var (
 	MockErr error = fmt.Errorf("mock error")
 )
 
+// NewObjectID is constructor for the custom ObjectID type
+func NewObjectID(id byte) primitive.ObjectID {
+	var object_id primitive.ObjectID
+	object_id = [12]byte{id}
+	return object_id
+}
+
 // TestAddBooks tests Librarian.AddBook in the following ways:
 //
 // 1. a senior librarian attempts to add a new book successfully.
@@ -543,7 +550,7 @@ func TestCheckOut(t *testing.T){
 				Title: "Harry Potter",
 				Author: "J.K. Rowling",
 				Copies: 1, // only 1 copy of the book available
-				Users: []*primitive.ObjectID{nil}, // 1 book checked out
+				Users: []primitive.ObjectID{NewObjectID(1)}, // 1 book checked out
 			}, // retrieve book
 
 			data.User{
@@ -636,6 +643,100 @@ func TestCheckOut(t *testing.T){
 			})
 
 			actual := table.librarian.CheckOut(table.title, table.author, table.username)
+
+			assert.Equal(t, table.expected, actual, "error returned not the same as expected")
+		})
+	}
+}
+
+// TestCheckIn tests Librarian.CheckIn in the following ways:
+//
+// 1. a senior librarian attempts to checkin a book from a registered user, successfully.
+// 2. a normal librarian attempts to checkin a book from a registered user, successfully.
+// 3. a normal librarian attempts to checkin a book from a non registered user, unsuccessfully.
+// 4. a normal librarian attempts to checkin a non existing book from a registered user, unsuccessfully.
+// 5. a normal librarian attempts to checkin a book that the registered user hasn't checked out, unsuccessfully.
+// 6. a normal librarian attempts to checkin a book from a registered user, but the user update fails.
+// 7. a normal librarian attempts to checkin a book from a registered user, but the book update fails.
+func TestCheckIn(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		title string
+		author string
+		username string
+
+		// Persister stuff
+		retrieve_book data.Book
+		retrieve_user data.User
+
+		retrieve_book_err error
+		update_book_err error
+		retrieve_user_err error
+		update_user_err error
+
+		expected error
+	}{
+		{
+			"senior checkin successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+				CheckedOutBooks: []*data.CheckedOutBook{
+					&data.CheckedOutBook{
+						BookRef: NewObjectID(1),
+					},
+				},
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			nil,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// mock stuff
+			table.librarian.Persister.(*mocks.MockPersister).On("Update", "books", mock.Anything, mock.Anything).Return(table.update_book_err)
+			table.librarian.Persister.(*mocks.MockPersister).On("Update", "users", mock.Anything, mock.Anything).Return(table.update_user_err)
+
+			// mock persister retrieve, to return table.retrieve_book in as the result arg
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "books", mock.Anything, mock.Anything).Return(table.retrieve_book_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.Book)
+				copier.Copy(arg, &table.retrieve_book)
+			})
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "users", mock.Anything, mock.Anything).Return(table.retrieve_user_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.User)
+				copier.Copy(arg, &table.retrieve_user)
+			})
+
+			actual := table.librarian.CheckIn(table.title, table.author, table.username)
 
 			assert.Equal(t, table.expected, actual, "error returned not the same as expected")
 		})

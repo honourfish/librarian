@@ -187,7 +187,7 @@ func (l *Librarian) CheckOut(title string, author string, username string) error
 
 	// update the book and the user to reflect that the user has checked out the book
 	user.CheckedOutBooks = append(user.CheckedOutBooks, checked_out_book)
-	book.Users = append(book.Users, &user.ID)
+	book.Users = append(book.Users, user.ID)
 
 	if err = l.updateUser(user, user); err != nil {
 		 return err
