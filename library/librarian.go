@@ -1,7 +1,7 @@
 package library
 
 import (
-	"log"
+	//"log"
 	"sync"
 	"time"
 
@@ -51,7 +51,6 @@ func (l *Librarian) book(title string, author string) (*data.Book, error) {
 	// attempt to get the book from persistent storage
 	err := l.Persister.Retrieve("books", filter, &book)
 
-	log.Printf("Get: %d", book.Copies)
 	return &book, err
 }
 
@@ -59,7 +58,6 @@ func (l *Librarian) book(title string, author string) (*data.Book, error) {
 //   title and author.
 func (l *Librarian) updateBook(old_book *data.Book, new_book *data.Book) (err error) {
 
-	log.Printf("updateBook: %d", new_book.Copies)
 	filter := bson.M{"title": old_book.Title, "author": old_book.Author}
 
 	if err = l.Persister.Update("books", filter, new_book); err != nil {
@@ -71,7 +69,7 @@ func (l *Librarian) updateBook(old_book *data.Book, new_book *data.Book) (err er
 
 // addBook adds a given book to persistent storage
 func (l *Librarian) addBook(book *data.Book) (err error) {
-	log.Printf("add copies: %d", book.Copies)
+
 	if err = l.Persister.Create("books", book); err != nil {
 		return err
 	}

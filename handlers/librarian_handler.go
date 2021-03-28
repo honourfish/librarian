@@ -94,3 +94,40 @@ func (lh *LibrarianHandler) HandleGetUser(params operations.GetLibrarianUsername
 
 	return operations.NewGetLibrarianUsernameUserUserOK().WithPayload(responseUser)
 }
+
+// HandleGetBook is the handler for get request for the endpoint /librarian/{username}/book/{title}/{author}
+func (lh *LibrarianHandler) HandleGetBook(params operations.GetLibrarianUsernameBookTitleAuthorParams) middleware.Responder {
+
+	// get the librarian
+	filter := bson.D{{"username", params.Username}}
+
+	var librarian library.Librarian
+	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
+		log.Println(err)
+		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+	}
+	
+	// ensure the librarian has a valid persister
+	librarian.Persister = lh.Persister
+
+	copies, checked_out, err := librarian.Stock(params.Title, params.Author)
+	if err != nil {
+		log.Println(err)
+		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+	}
+
+	var in_stock bool
+	in_stock, err = librarian.InStock(params.Title, params.Author)
+	if err != nil {
+		log.Println(err)
+		return operations.NewGetLibrarianUsernameBookTitleAuthorOK()
+	}
+
+	responseBookStock := &models.BookStock{
+		Copies: int64(copies),
+		Checkedout: int64(checked_out),
+		Instock: in_stock,
+	}
+
+	return operations.NewGetLibrarianUsernameBookTitleAuthorOK().WithPayload(responseBookStock)
+}

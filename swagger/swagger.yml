@@ -31,7 +31,7 @@ paths:
   /librarian/{username}/user/{user}:
 
     get:
-      summary: "request a book by its title"
+      summary: "request a user by their username"
 
       parameters:
         - in: path
@@ -84,6 +84,31 @@ paths:
         '201':
           description: Created
 
+  /librarian/{username}/book/{title}/{author}:
+
+    get:
+      summary: "request a books stock information by its title and author"
+
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: title
+          required: true
+          type: string
+        - in: path
+          name: author
+          required: true
+          type: string
+
+      responses:
+        '200':
+          description: Retrieved
+          schema:
+            $ref: '#/definitions/BookStock'
+   
   /librarian/{username}/book/{title}/{author}/{copies}:
     delete:
       summary: "delete a book by its title/author"
@@ -196,6 +221,16 @@ definitions:
           type: string
         copies:
           type: integer
+    BookStock:
+      description: A JSON object containing book stock information
+      type: object
+      properties:
+        copies:
+          type: integer
+        checkedout:
+          type: integer
+        instock:
+          type: boolean
     User:
       description: A JSON object containing user information
       type: object

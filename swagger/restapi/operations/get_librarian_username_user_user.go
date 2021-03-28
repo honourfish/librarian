@@ -31,7 +31,7 @@ func NewGetLibrarianUsernameUserUser(ctx *middleware.Context, handler GetLibrari
 
 /* GetLibrarianUsernameUserUser swagger:route GET /librarian/{username}/user/{user} getLibrarianUsernameUserUser
 
-request a book by its title
+request a user by their username
 
 */
 type GetLibrarianUsernameUserUser struct {

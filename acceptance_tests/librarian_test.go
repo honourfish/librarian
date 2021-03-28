@@ -66,6 +66,7 @@ func copiesOfTheBookAreRemoved(copies int) error {
 	params.Username = Librarian.Username
 	params.Title = Book.Title
 	params.Author = Book.Author
+	params.Copies = Book.Copies
 
 	if _, err := HttpClient.Operations.DeleteLibrarianUsernameBookTitleAuthorCopies(params); err != nil {
 		return err
@@ -76,7 +77,7 @@ func copiesOfTheBookAreRemoved(copies int) error {
 
 // theBookHasCopies assumes the book has already been retrieved and stored in the global 'Book'.
 func theBookHasCopies(copies int) error {
-	assert.Equal(&t, int64(copies), Book.Copies, "copies are not equal")
+	assert.Equal(&t, int64(copies), BookStock.Copies, "copies are not equal")
 	return t.err
 }
 

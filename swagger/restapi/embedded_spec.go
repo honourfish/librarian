@@ -156,6 +156,39 @@ func init() {
         }
       }
     },
+    "/librarian/{username}/book/{title}/{author}": {
+      "get": {
+        "summary": "request a books stock information by its title and author",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "author",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/BookStock"
+            }
+          }
+        }
+      }
+    },
     "/librarian/{username}/book/{title}/{author}/{copies}": {
       "delete": {
         "summary": "delete a book by its title/author",
@@ -219,7 +252,7 @@ func init() {
     },
     "/librarian/{username}/user/{user}": {
       "get": {
-        "summary": "request a book by its title",
+        "summary": "request a user by their username",
         "parameters": [
           {
             "type": "string",
@@ -280,6 +313,21 @@ func init() {
         },
         "title": {
           "type": "string"
+        }
+      }
+    },
+    "BookStock": {
+      "description": "A JSON object containing book stock information",
+      "type": "object",
+      "properties": {
+        "checkedout": {
+          "type": "integer"
+        },
+        "copies": {
+          "type": "integer"
+        },
+        "instock": {
+          "type": "boolean"
         }
       }
     },
@@ -436,6 +484,39 @@ func init() {
         }
       }
     },
+    "/librarian/{username}/book/{title}/{author}": {
+      "get": {
+        "summary": "request a books stock information by its title and author",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "author",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/BookStock"
+            }
+          }
+        }
+      }
+    },
     "/librarian/{username}/book/{title}/{author}/{copies}": {
       "delete": {
         "summary": "delete a book by its title/author",
@@ -499,7 +580,7 @@ func init() {
     },
     "/librarian/{username}/user/{user}": {
       "get": {
-        "summary": "request a book by its title",
+        "summary": "request a user by their username",
         "parameters": [
           {
             "type": "string",
@@ -560,6 +641,21 @@ func init() {
         },
         "title": {
           "type": "string"
+        }
+      }
+    },
+    "BookStock": {
+      "description": "A JSON object containing book stock information",
+      "type": "object",
+      "properties": {
+        "checkedout": {
+          "type": "integer"
+        },
+        "copies": {
+          "type": "integer"
+        },
+        "instock": {
+          "type": "boolean"
         }
       }
     },

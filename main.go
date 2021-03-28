@@ -51,13 +51,13 @@ func main() {
 
 	// /librarian/{username}/book handlers
 	seniorLibrarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
+	librarianHandler := handlers.LibrarianHandler{Persister: mongoDb}
 
 	api.PostLibrarianUsernameBookHandler = operations.PostLibrarianUsernameBookHandlerFunc(seniorLibrarianHandler.HandlePostBook)
 	api.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler = operations.DeleteLibrarianUsernameBookTitleAuthorCopiesHandlerFunc(seniorLibrarianHandler.HandleDeleteBook)
+	api.GetLibrarianUsernameBookTitleAuthorHandler = operations.GetLibrarianUsernameBookTitleAuthorHandlerFunc(librarianHandler.HandleGetBook)
 
 	// /librarian/{username}/user handlers
-	librarianHandler := handlers.LibrarianHandler{Persister: mongoDb}
-
 	api.PostLibrarianUsernameUserHandler = operations.PostLibrarianUsernameUserHandlerFunc(librarianHandler.HandlePostUser)
 	api.DeleteLibrarianUsernameUserUserHandler = operations.DeleteLibrarianUsernameUserUserHandlerFunc(librarianHandler.HandleDeleteUser)
 	api.GetLibrarianUsernameUserUserHandler = operations.GetLibrarianUsernameUserUserHandlerFunc(librarianHandler.HandleGetUser)

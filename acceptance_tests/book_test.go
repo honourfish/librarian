@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/cucumber/godog"
 
-	"github.com/stretchr/testify/assert"
+	//"github.com/stretchr/testify/assert"
 
 	"librarian/client/client"
 	"librarian/client/client/operations"
@@ -25,6 +25,7 @@ func (a *asserter) Errorf(format string, args ...interface{}) {
 // Globals can be shared between steps
 var HttpClient *client.Library
 var Book *models.Book
+var BookStock *models.BookStock
 var t asserter
 
 func aBookIsAddedWithTitleAndAuthor(title, author string) (err error) {
@@ -71,16 +72,19 @@ func theBookIsUpdatedWithNewTitle(title string) (err error) {
 
 func theBookCanBeRetrieved() error {
 	// use default constuctor to set the default request timeout
-	params := operations.NewGetBookTitleParams()
+	params := operations.NewGetLibrarianUsernameBookTitleAuthorParams()
 
+	params.Username = Librarian.Username
 	params.Title = Book.Title
+	params.Author = Book.Author
 
-	response, err := HttpClient.Operations.GetBookTitle(params)
+	response, err := HttpClient.Operations.GetLibrarianUsernameBookTitleAuthor(params)
 	if err != nil {
 		return err
 	}
 
-	assert.Equal(&t, *Book, *response.Payload, "expected book and actual book are different")
+	var bookStock models.BookStock = *response.Payload
+	BookStock = &bookStock
 	return t.err
 }
 
@@ -106,7 +110,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.AfterScenario(func(scenario *godog.Scenario, err error){
 
 		// for now assume the first tag is book or user
-		if scenario.Tags[0].Name == "book" {
+		if scenario.Tags[0].Name == "@book" {
 			// delete the book after the test has run
 			params := operations.NewDeleteBookTitleParams()
 
