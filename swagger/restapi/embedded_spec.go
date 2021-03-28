@@ -191,6 +191,55 @@ func init() {
           }
         }
       }
+    },
+    "/librarian/{username}/user": {
+      "post": {
+        "summary": "request a user be added to the library",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/librarian/{username}/user/{user}": {
+      "delete": {
+        "summary": "delete a user by their username",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -205,6 +254,18 @@ func init() {
           "type": "integer"
         },
         "title": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "description": "A JSON object containing user information",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         }
       }
@@ -385,6 +446,55 @@ func init() {
           }
         }
       }
+    },
+    "/librarian/{username}/user": {
+      "post": {
+        "summary": "request a user be added to the library",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/librarian/{username}/user/{user}": {
+      "delete": {
+        "summary": "delete a user by their username",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -399,6 +509,18 @@ func init() {
           "type": "integer"
         },
         "title": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "description": "A JSON object containing user information",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         }
       }

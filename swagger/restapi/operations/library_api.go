@@ -48,6 +48,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		DeleteLibrarianUsernameBookTitleAuthorCopiesHandler: DeleteLibrarianUsernameBookTitleAuthorCopiesHandlerFunc(func(params DeleteLibrarianUsernameBookTitleAuthorCopiesParams) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteLibrarianUsernameBookTitleAuthorCopies has not yet been implemented")
 		}),
+		DeleteLibrarianUsernameUserUserHandler: DeleteLibrarianUsernameUserUserHandlerFunc(func(params DeleteLibrarianUsernameUserUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteLibrarianUsernameUserUser has not yet been implemented")
+		}),
 		GetBookHandler: GetBookHandlerFunc(func(params GetBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetBook has not yet been implemented")
 		}),
@@ -59,6 +62,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		}),
 		PostLibrarianUsernameBookHandler: PostLibrarianUsernameBookHandlerFunc(func(params PostLibrarianUsernameBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation PostLibrarianUsernameBook has not yet been implemented")
+		}),
+		PostLibrarianUsernameUserHandler: PostLibrarianUsernameUserHandlerFunc(func(params PostLibrarianUsernameUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation PostLibrarianUsernameUser has not yet been implemented")
 		}),
 		PutBookTitleHandler: PutBookTitleHandlerFunc(func(params PutBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation PutBookTitle has not yet been implemented")
@@ -103,6 +109,8 @@ type LibraryAPI struct {
 	DeleteBookTitleHandler DeleteBookTitleHandler
 	// DeleteLibrarianUsernameBookTitleAuthorCopiesHandler sets the operation handler for the delete librarian username book title author copies operation
 	DeleteLibrarianUsernameBookTitleAuthorCopiesHandler DeleteLibrarianUsernameBookTitleAuthorCopiesHandler
+	// DeleteLibrarianUsernameUserUserHandler sets the operation handler for the delete librarian username user user operation
+	DeleteLibrarianUsernameUserUserHandler DeleteLibrarianUsernameUserUserHandler
 	// GetBookHandler sets the operation handler for the get book operation
 	GetBookHandler GetBookHandler
 	// GetBookTitleHandler sets the operation handler for the get book title operation
@@ -111,6 +119,8 @@ type LibraryAPI struct {
 	PostBookHandler PostBookHandler
 	// PostLibrarianUsernameBookHandler sets the operation handler for the post librarian username book operation
 	PostLibrarianUsernameBookHandler PostLibrarianUsernameBookHandler
+	// PostLibrarianUsernameUserHandler sets the operation handler for the post librarian username user operation
+	PostLibrarianUsernameUserHandler PostLibrarianUsernameUserHandler
 	// PutBookTitleHandler sets the operation handler for the put book title operation
 	PutBookTitleHandler PutBookTitleHandler
 
@@ -196,6 +206,9 @@ func (o *LibraryAPI) Validate() error {
 	if o.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler == nil {
 		unregistered = append(unregistered, "DeleteLibrarianUsernameBookTitleAuthorCopiesHandler")
 	}
+	if o.DeleteLibrarianUsernameUserUserHandler == nil {
+		unregistered = append(unregistered, "DeleteLibrarianUsernameUserUserHandler")
+	}
 	if o.GetBookHandler == nil {
 		unregistered = append(unregistered, "GetBookHandler")
 	}
@@ -207,6 +220,9 @@ func (o *LibraryAPI) Validate() error {
 	}
 	if o.PostLibrarianUsernameBookHandler == nil {
 		unregistered = append(unregistered, "PostLibrarianUsernameBookHandler")
+	}
+	if o.PostLibrarianUsernameUserHandler == nil {
+		unregistered = append(unregistered, "PostLibrarianUsernameUserHandler")
 	}
 	if o.PutBookTitleHandler == nil {
 		unregistered = append(unregistered, "PutBookTitleHandler")
@@ -307,6 +323,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/librarian/{username}/book/{title}/{author}/{copies}"] = NewDeleteLibrarianUsernameBookTitleAuthorCopies(o.context, o.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/librarian/{username}/user/{user}"] = NewDeleteLibrarianUsernameUserUser(o.context, o.DeleteLibrarianUsernameUserUserHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -323,6 +343,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/librarian/{username}/book"] = NewPostLibrarianUsernameBook(o.context, o.PostLibrarianUsernameBookHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/librarian/{username}/user"] = NewPostLibrarianUsernameUser(o.context, o.PostLibrarianUsernameUserHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
