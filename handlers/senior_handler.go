@@ -42,3 +42,26 @@ func (slh *SeniorLibrarianHandler) HandlePostBook(params operations.PostLibraria
 
 	return operations.NewPostLibrarianUsernameBookCreated()
 }
+
+// handleDeleteBook is the handler for delete request for the endpoint /librarian/{username}/book/{title}/{author}/{copies}
+func (slh *SeniorLibrarianHandler) HandleDeleteBook(params operations.DeleteLibrarianUsernameBookTitleAuthorCopiesParams) middleware.Responder {
+
+	// get the librarian
+	filter := bson.D{{"username", params.Username}}
+
+	var librarian library.Librarian
+	if err := slh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
+		log.Println(err)
+		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()
+	}
+	
+	// ensure the librarian has a valid persister
+	librarian.Persister = slh.Persister
+
+	if err := librarian.RemoveBooks(params.Title, params.Author, int(params.Copies)); err != nil {
+		log.Println(err)
+		return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()
+	}
+
+	return operations.NewDeleteLibrarianUsernameBookTitleAuthorCopiesOK()
+}

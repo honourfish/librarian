@@ -32,7 +32,7 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	DeleteBookTitle(params *DeleteBookTitleParams, opts ...ClientOption) (*DeleteBookTitleOK, error)
 
-	DeleteLibrarianUsernameBookTitleAuthor(params *DeleteLibrarianUsernameBookTitleAuthorParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorOK, error)
+	DeleteLibrarianUsernameBookTitleAuthorCopies(params *DeleteLibrarianUsernameBookTitleAuthorCopiesParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorCopiesOK, error)
 
 	GetBook(params *GetBookParams, opts ...ClientOption) (*GetBookOK, error)
 
@@ -86,22 +86,22 @@ func (a *Client) DeleteBookTitle(params *DeleteBookTitleParams, opts ...ClientOp
 }
 
 /*
-  DeleteLibrarianUsernameBookTitleAuthor deletes a book by its title author
+  DeleteLibrarianUsernameBookTitleAuthorCopies deletes a book by its title author
 */
-func (a *Client) DeleteLibrarianUsernameBookTitleAuthor(params *DeleteLibrarianUsernameBookTitleAuthorParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorOK, error) {
+func (a *Client) DeleteLibrarianUsernameBookTitleAuthorCopies(params *DeleteLibrarianUsernameBookTitleAuthorCopiesParams, opts ...ClientOption) (*DeleteLibrarianUsernameBookTitleAuthorCopiesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteLibrarianUsernameBookTitleAuthorParams()
+		params = NewDeleteLibrarianUsernameBookTitleAuthorCopiesParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "DeleteLibrarianUsernameBookTitleAuthor",
+		ID:                 "DeleteLibrarianUsernameBookTitleAuthorCopies",
 		Method:             "DELETE",
-		PathPattern:        "/librarian/{username}/book/{title}/{author}",
+		PathPattern:        "/librarian/{username}/book/{title}/{author}/{copies}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DeleteLibrarianUsernameBookTitleAuthorReader{formats: a.formats},
+		Reader:             &DeleteLibrarianUsernameBookTitleAuthorCopiesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	}
@@ -113,13 +113,13 @@ func (a *Client) DeleteLibrarianUsernameBookTitleAuthor(params *DeleteLibrarianU
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*DeleteLibrarianUsernameBookTitleAuthorOK)
+	success, ok := result.(*DeleteLibrarianUsernameBookTitleAuthorCopiesOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for DeleteLibrarianUsernameBookTitleAuthor: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for DeleteLibrarianUsernameBookTitleAuthorCopies: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

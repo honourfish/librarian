@@ -156,7 +156,7 @@ func init() {
         }
       }
     },
-    "/librarian/{username}/book/{title}/{author}": {
+    "/librarian/{username}/book/{title}/{author}/{copies}": {
       "delete": {
         "summary": "delete a book by its title/author",
         "parameters": [
@@ -175,6 +175,12 @@ func init() {
           {
             "type": "string",
             "name": "author",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "copies",
             "in": "path",
             "required": true
           }
@@ -344,7 +350,7 @@ func init() {
         }
       }
     },
-    "/librarian/{username}/book/{title}/{author}": {
+    "/librarian/{username}/book/{title}/{author}/{copies}": {
       "delete": {
         "summary": "delete a book by its title/author",
         "parameters": [
@@ -363,6 +369,12 @@ func init() {
           {
             "type": "string",
             "name": "author",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "copies",
             "in": "path",
             "required": true
           }

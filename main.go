@@ -53,6 +53,7 @@ func main() {
 	librarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
 
 	api.PostLibrarianUsernameBookHandler = operations.PostLibrarianUsernameBookHandlerFunc(librarianHandler.HandlePostBook)
+	api.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler = operations.DeleteLibrarianUsernameBookTitleAuthorCopiesHandlerFunc(librarianHandler.HandleDeleteBook)
 
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)

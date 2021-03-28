@@ -28,7 +28,7 @@ paths:
         '201':
           description: Created
 
-  /librarian/{username}/book/{title}/{author}:
+  /librarian/{username}/book/{title}/{author}/{copies}:
     delete:
       summary: "delete a book by its title/author"
 
@@ -44,6 +44,10 @@ paths:
         - in: path
           name: author
           type: string
+          required: true
+        - in: path
+          name: copies
+          type: integer
           required: true
 
       responses:

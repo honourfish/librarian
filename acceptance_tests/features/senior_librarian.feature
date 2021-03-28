@@ -13,3 +13,10 @@ Feature: Excercise Senior engineer scenarios
         When 5 more copies of the book are added
         Then the book can be retrieved
         And the book has 10 copies
+
+    Scenario: Remove number of copies of an existing Book from the library
+        Given a library with book "Harry Potter", author "J.K Rowling" and copies 5
+        And a "Senior" librarian with username "Janice"
+        When 3 copies of the book are removed
+        Then the book can be retrieved
+        And the book has 2 copies
