@@ -421,8 +421,8 @@ func TestCheckOut(t *testing.T){
 		retrieve_user data.User
 
 		retrieve_book_err error
-		update_book_err error
 		retrieve_user_err error
+		update_book_err error
 		update_user_err error
 
 		expected error
@@ -672,8 +672,8 @@ func TestCheckIn(t *testing.T){
 		retrieve_user data.User
 
 		retrieve_book_err error
-		update_book_err error
 		retrieve_user_err error
+		update_book_err error
 		update_user_err error
 
 		expected error
@@ -716,6 +716,216 @@ func TestCheckIn(t *testing.T){
 
 			// expected error
 			nil,
+		},
+		{
+			"normal checkin successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+				CheckedOutBooks: []*data.CheckedOutBook{
+					&data.CheckedOutBook{
+						BookRef: NewObjectID(1),
+					},
+				},
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal non registered user",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			data.User{}, // retrieve user
+
+			nil, // retrieve book error
+			MockErr, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal non existent book",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+				CheckedOutBooks: []*data.CheckedOutBook{
+					&data.CheckedOutBook{
+						BookRef: NewObjectID(1),
+					},
+				},
+			}, // retrieve user
+
+			MockErr, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal checkin non checked out book",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+			}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			&errors.NotCheckedOutError{},
+		},
+		{
+			"normal update user failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+				CheckedOutBooks: []*data.CheckedOutBook{
+					&data.CheckedOutBook{
+						BookRef: NewObjectID(1),
+					},
+				},
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			MockErr, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal update book failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			data.User{
+				ID: NewObjectID(2),
+				Username: "Phil",
+				CheckedOutBooks: []*data.CheckedOutBook{
+					&data.CheckedOutBook{
+						BookRef: NewObjectID(1),
+					},
+				},
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			MockErr, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
 		},
 	}
 
