@@ -147,6 +147,38 @@ paths:
         '404':
           description: Not Found
 
+  /librarian/{username}/user/{user}/checkout:
+    put:
+      summary: "request a book to be checked out by a user"
+
+      parameters:
+        - in: body
+          name: book
+          schema:
+            type: object
+            required:
+              - title
+              - author
+            properties:
+              title:
+                type: string
+              author:
+                type: string
+        - in: path
+          name: username
+          type: string
+          required: true
+        - in: path
+          name: user
+          type: string
+          required: true
+
+      responses:
+        '200':
+          description: Updated
+        '404':
+          description: Not Found
+
   /book:
     post:
       summary: "request a book be added to the library"

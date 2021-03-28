@@ -28,45 +28,8 @@ var Book *models.Book
 var BookStock *models.BookStock
 var t asserter
 
-func aBookIsAddedWithTitleAndAuthor(title, author string) (err error) {
-	// use default constuctor to set the default request timeout
-	params := operations.NewPostBookParams()
-
-	Book = &models.Book {
-		Title: title,
-		Author: author,
-	}
-	params.Book = Book
-
-	//var response *operations.PostBookCreated
-	if _, err = HttpClient.Operations.PostBook(params); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func aLibraryWithNoBooks() error {
 	// nothing in the library yet
-	return nil
-}
-
-func theBookIsUpdatedWithNewTitle(title string) (err error) {
-	// use default constuctor to set the default request timeout
-	params := operations.NewPutBookTitleParams()
-
-	// set the search filter title to be the old title
-	params.Title = Book.Title
-
-	// update the new title
-	Book.Title = title
-	params.Book = Book
-
-	//var response *operations.PostBookCreated
-	if _, err = HttpClient.Operations.PutBookTitle(params); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -105,12 +68,21 @@ func InitializeTestSuite(ctx *godog.TestSuiteContext) {
 	ctx.BeforeSuite(BeforeSuite)
 }
 
+// containsTag checks if a scenario contains a given tag, e.g. '@book'.
+func containsTag(tag string, scenario *godog.Scenario) bool {
+    for _, scenario_tag := range scenario.Tags {
+        if scenario_tag.Name == tag {
+            return true
+        }
+    }
+    return false
+}
+
 func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.AfterScenario(func(scenario *godog.Scenario, err error){
 
-		// for now assume the first tag is book or user
-		if scenario.Tags[0].Name == "@book" {
+		if containsTag("@book", scenario) {
 			// delete the book after the test has run
 			params := operations.NewDeleteBookTitleParams()
 
@@ -123,8 +95,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			}
 		}
 
-		// for now assume the first tag is book or user
-		if scenario.Tags[0].Name == "@user" {
+		if containsTag("@user", scenario) {
 			// delete the user after the test has run
 			params := operations.NewDeleteLibrarianUsernameUserUserParams()
 
@@ -139,20 +110,19 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		}
 
 	})
-
-	ctx.Step(`^a book is added with title "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
 	ctx.Step(`^a library with no books$`, aLibraryWithNoBooks)
 	ctx.Step(`^a "([^"]*)" librarian with username "([^"]*)"$`, aLibrarianWithUsername)
 	ctx.Step(`^the book can be retrieved$`, theBookCanBeRetrieved)
-	ctx.Step(`^a library with book titled "([^"]*)" and author "([^"]*)"$`, aBookIsAddedWithTitleAndAuthor)
-	ctx.Step(`^the book is updated with new title "([^"]*)"$`, theBookIsUpdatedWithNewTitle)
 	ctx.Step(`^the updated book can be retrieved$`, theBookCanBeRetrieved)
 	ctx.Step(`^a book is added with title "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
 	ctx.Step(`^the book has (\d+) copies$`, theBookHasCopies)
-	ctx.Step(`^a library with book "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
+	ctx.Step(`^a library with book "([^"]*)", author "([^"]*)" and copies (\d+)$`, aLibraryWithBookAuthorAndCopies)
 	ctx.Step(`^(\d+) more copies of the book are added$`, moreCopiesOfTheBookAreAdded)
 	ctx.Step(`^(\d+) copies of the book are removed$`, copiesOfTheBookAreRemoved)
 	ctx.Step(`^a library with no users$`, aLibraryWithNoUsers)
 	ctx.Step(`^a user is added with username "([^"]*)" and name "([^"]*)"$`, aUserIsAddedWithUsernameAndName)
 	ctx.Step(`^the user can be retrieved$`, theUserCanBeRetrieved)
+	ctx.Step(`^a library with user username "([^"]*)" and name "([^"]*)"$`, aLibraryWithUserUsernameAndName)
+	ctx.Step(`^the checked out copies of the book is (\d+)$`, theCheckedOutCopiesOfTheBookIs)
+	ctx.Step(`^the user checks out the book$`, theUserChecksOutTheBook)
 }

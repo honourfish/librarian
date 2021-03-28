@@ -131,3 +131,26 @@ func (lh *LibrarianHandler) HandleGetBook(params operations.GetLibrarianUsername
 
 	return operations.NewGetLibrarianUsernameBookTitleAuthorOK().WithPayload(responseBookStock)
 }
+
+// HandlePutCheckOut is the handler for put request for the endpoint /librarian/{username}/user/{user}/checkout
+func (lh *LibrarianHandler) HandlePutCheckOut(params operations.PutLibrarianUsernameUserUserCheckoutParams) middleware.Responder {
+
+	// get the librarian
+	filter := bson.M{"username": params.Username}
+
+	var librarian library.Librarian
+	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
+		log.Println(err)
+		return operations.NewPutLibrarianUsernameUserUserCheckoutNotFound()
+	}
+	
+	// ensure the librarian has a valid persister
+	librarian.Persister = lh.Persister
+
+	if err := librarian.CheckOut(*params.Book.Title, *params.Book.Author, params.User); err != nil {
+		log.Println(err)
+		return operations.NewPutLibrarianUsernameUserUserCheckoutNotFound()
+	}
+
+	return operations.NewPutLibrarianUsernameUserUserCheckoutOK()
+}

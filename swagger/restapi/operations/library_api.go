@@ -75,6 +75,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		PutBookTitleHandler: PutBookTitleHandlerFunc(func(params PutBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation PutBookTitle has not yet been implemented")
 		}),
+		PutLibrarianUsernameUserUserCheckoutHandler: PutLibrarianUsernameUserUserCheckoutHandlerFunc(func(params PutLibrarianUsernameUserUserCheckoutParams) middleware.Responder {
+			return middleware.NotImplemented("operation PutLibrarianUsernameUserUserCheckout has not yet been implemented")
+		}),
 	}
 }
 
@@ -133,6 +136,8 @@ type LibraryAPI struct {
 	PostLibrarianUsernameUserHandler PostLibrarianUsernameUserHandler
 	// PutBookTitleHandler sets the operation handler for the put book title operation
 	PutBookTitleHandler PutBookTitleHandler
+	// PutLibrarianUsernameUserUserCheckoutHandler sets the operation handler for the put librarian username user user checkout operation
+	PutLibrarianUsernameUserUserCheckoutHandler PutLibrarianUsernameUserUserCheckoutHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -242,6 +247,9 @@ func (o *LibraryAPI) Validate() error {
 	}
 	if o.PutBookTitleHandler == nil {
 		unregistered = append(unregistered, "PutBookTitleHandler")
+	}
+	if o.PutLibrarianUsernameUserUserCheckoutHandler == nil {
+		unregistered = append(unregistered, "PutLibrarianUsernameUserUserCheckoutHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -375,6 +383,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/book/{title}"] = NewPutBookTitle(o.context, o.PutBookTitleHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/librarian/{username}/user/{user}/checkout"] = NewPutLibrarianUsernameUserUserCheckout(o.context, o.PutLibrarianUsernameUserUserCheckoutHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

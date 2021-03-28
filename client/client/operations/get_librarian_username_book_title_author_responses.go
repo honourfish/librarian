@@ -29,6 +29,12 @@ func (o *GetLibrarianUsernameBookTitleAuthorReader) ReadResponse(response runtim
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewGetLibrarianUsernameBookTitleAuthorNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	default:
 		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
 	}
@@ -62,6 +68,27 @@ func (o *GetLibrarianUsernameBookTitleAuthorOK) readResponse(response runtime.Cl
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
+
+	return nil
+}
+
+// NewGetLibrarianUsernameBookTitleAuthorNotFound creates a GetLibrarianUsernameBookTitleAuthorNotFound with default headers values
+func NewGetLibrarianUsernameBookTitleAuthorNotFound() *GetLibrarianUsernameBookTitleAuthorNotFound {
+	return &GetLibrarianUsernameBookTitleAuthorNotFound{}
+}
+
+/* GetLibrarianUsernameBookTitleAuthorNotFound describes a response with status code 404, with default header values.
+
+Not Found
+*/
+type GetLibrarianUsernameBookTitleAuthorNotFound struct {
+}
+
+func (o *GetLibrarianUsernameBookTitleAuthorNotFound) Error() string {
+	return fmt.Sprintf("[GET /librarian/{username}/book/{title}/{author}][%d] getLibrarianUsernameBookTitleAuthorNotFound ", 404)
+}
+
+func (o *GetLibrarianUsernameBookTitleAuthorNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	return nil
 }

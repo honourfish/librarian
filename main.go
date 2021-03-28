@@ -59,7 +59,8 @@ func main() {
 	api.PostLibrarianUsernameUserHandler = operations.PostLibrarianUsernameUserHandlerFunc(librarianHandler.HandlePostUser)
 	api.DeleteLibrarianUsernameUserUserHandler = operations.DeleteLibrarianUsernameUserUserHandlerFunc(librarianHandler.HandleDeleteUser)
 	api.GetLibrarianUsernameUserUserHandler = operations.GetLibrarianUsernameUserUserHandlerFunc(librarianHandler.HandleGetUser)
-	
+	api.PutLibrarianUsernameUserUserCheckoutHandler = operations.PutLibrarianUsernameUserUserCheckoutHandlerFunc(librarianHandler.HandlePutCheckOut)
+
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)
 	}

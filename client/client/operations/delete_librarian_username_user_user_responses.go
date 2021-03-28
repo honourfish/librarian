@@ -26,6 +26,12 @@ func (o *DeleteLibrarianUsernameUserUserReader) ReadResponse(response runtime.Cl
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewDeleteLibrarianUsernameUserUserNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	default:
 		return nil, runtime.NewAPIError("response status code does not match any response statuses defined for this endpoint in the swagger spec", response, response.Code())
 	}
@@ -48,6 +54,27 @@ func (o *DeleteLibrarianUsernameUserUserOK) Error() string {
 }
 
 func (o *DeleteLibrarianUsernameUserUserOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	return nil
+}
+
+// NewDeleteLibrarianUsernameUserUserNotFound creates a DeleteLibrarianUsernameUserUserNotFound with default headers values
+func NewDeleteLibrarianUsernameUserUserNotFound() *DeleteLibrarianUsernameUserUserNotFound {
+	return &DeleteLibrarianUsernameUserUserNotFound{}
+}
+
+/* DeleteLibrarianUsernameUserUserNotFound describes a response with status code 404, with default header values.
+
+Not Found
+*/
+type DeleteLibrarianUsernameUserUserNotFound struct {
+}
+
+func (o *DeleteLibrarianUsernameUserUserNotFound) Error() string {
+	return fmt.Sprintf("[DELETE /librarian/{username}/user/{user}][%d] deleteLibrarianUsernameUserUserNotFound ", 404)
+}
+
+func (o *DeleteLibrarianUsernameUserUserNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	return nil
 }

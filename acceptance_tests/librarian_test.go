@@ -41,6 +41,13 @@ func aBookIsAddedWithTitleAuthorAndCopies(title, author string, copies int) erro
 	return nil
 }
 
+func aLibraryWithBookAuthorAndCopies(title, author string, copies int) error {
+	// assume this is a given step so ensure the Librarian is Senior to be able to add books.
+	Librarian.Username = "Janice"
+
+	return aBookIsAddedWithTitleAuthorAndCopies(title, author, copies)
+}
+
 func moreCopiesOfTheBookAreAdded(copies int) error {
 	// use default constuctor to set the default request timeout
 	params := operations.NewPostLibrarianUsernameBookParams()
@@ -105,6 +112,13 @@ func aUserIsAddedWithUsernameAndName(username, name string) error {
 	return nil
 }
 
+func aLibraryWithUserUsernameAndName(username, name string) error {
+	// assume a given step so need a Librarian to create the user
+	Librarian.Username = "Jason"
+
+	return aUserIsAddedWithUsernameAndName(username, name)
+}
+
 func theUserCanBeRetrieved() error {
 	// use default constuctor to set the default request timeout
 	params := operations.NewGetLibrarianUsernameUserUserParams()
@@ -119,4 +133,29 @@ func theUserCanBeRetrieved() error {
 
 	assert.Equal(&t, *User, *response.Payload, "expected user and actual user are different")
 	return t.err
+}
+
+func theCheckedOutCopiesOfTheBookIs(checked_out int) error {
+	assert.Equal(&t, int64(checked_out), BookStock.Checkedout, "expected checked out books and actual are different")
+	return t.err
+}
+
+func theUserChecksOutTheBook() error {
+	// use default constuctor to set the default request timeout
+	params := operations.NewPutLibrarianUsernameUserUserCheckoutParams()
+
+	bookObj := operations.PutLibrarianUsernameUserUserCheckoutBody {
+		Title: &Book.Title,
+		Author: &Book.Author,
+	}
+
+	params.Username = Librarian.Username
+	params.User = User.Username
+	params.Book = bookObj
+
+	if _, err := HttpClient.Operations.PutLibrarianUsernameUserUserCheckout(params); err != nil {
+		return err
+	}
+
+	return nil
 }
