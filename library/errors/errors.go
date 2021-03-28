@@ -1,4 +1,4 @@
-package library
+package errors
 
 import (
 	"fmt"
@@ -14,6 +14,8 @@ type PermissionDeniedError struct {
 // NotEnoughCopiesError occurs when there are not enough copies.
 type NotEnoughCopiesError struct {}
 
+// NoteCheckedOutError occurs when a book is not checked out, but is thought to have been.
+type NotCheckedOutError struct{}
 
 // Error satisfies the error interface.
 func (pde *PermissionDeniedError) Error() string {
@@ -23,4 +25,9 @@ func (pde *PermissionDeniedError) Error() string {
 // Error satisfies the error interface.
 func (nece *NotEnoughCopiesError) Error() string {
 	return fmt.Sprintf("The Book does not have enough copies.")
+}
+
+// Error satisfies the error interface.
+func (ncoe *NotCheckedOutError) Error() string {
+	return fmt.Sprintf("The Book is not checked out.")
 }

@@ -9,6 +9,7 @@ import (
 
 	"librarian/library/data"
 	"librarian/library/interfaces"
+	"librarian/library/errors"
 )
 
 const (
@@ -93,6 +94,29 @@ func (l *Librarian) user(username string) (*data.User, error) {
 	return &user, err
 }
 
+// updateUser updates the old_user with the new_user, based on the old_users
+//   username.
+func (l *Librarian) updateUser(old_user *data.User, new_user *data.User) (err error) {
+
+	filter := bson.D{{"username", old_user.Username}}
+
+	if err = l.Persister.Update("users", filter, new_user); err != nil {
+		return
+	}
+
+	return
+}
+
+// addUser adds a given user to persistent storage
+func (l *Librarian) addUser(user *data.User) (err error) {
+
+	if err = l.Persister.Create("users", user); err != nil {
+		return err
+	}
+	
+	return err
+}
+
 // inStock checks if a book is currently in stock.
 // Not atomic.
 func (l *Librarian) inStock(title string, author string) (bool, error) {
@@ -102,9 +126,10 @@ func (l *Librarian) inStock(title string, author string) (bool, error) {
 		return false, err
 	}
 
-	if book.Copies > 0 {
+	if (book.Copies - len(book.Users)) > 0 {
 		return true, err
 	}
+
 	return false, err
 }
 
@@ -138,7 +163,7 @@ func (l *Librarian) CheckOut(title string, author string, username string) error
 	}
 
 	if isAvailable == false {
-		return &NotEnoughCopiesError{}
+		return &errors.NotEnoughCopiesError{}
 	}
 
 	// get user
@@ -161,17 +186,55 @@ func (l *Librarian) CheckOut(title string, author string, username string) error
 	}
 
 	// update the book and the user to reflect that the user has checked out the book
-	user.CheckedOutBooks = append(user.CheckedOutBooks, *checked_out_book)
-	book.Users = append(book.Users, user.ID)
+	user.CheckedOutBooks = append(user.CheckedOutBooks, checked_out_book)
+	book.Users = append(book.Users, &user.ID)
 
-	//if err = l.updateUser(user, user); err != nil {
-		// return err
-	//}
+	if err = l.updateUser(user, user); err != nil {
+		 return err
+	}
 	if err = l.updateBook(book, book); err != nil {
 		return err
 	}
 
 	return err
+}
+
+// CheckIn checks a book back into the library.
+func (l *Librarian) CheckIn(title string, author string, username string) (err error) {
+
+	// get user
+	var user *data.User
+	if user, err = l.user(username); err != nil {
+		return
+	}
+
+	// get the book
+	var book *data.Book
+	if book, err = l.book(title, author); err != nil {
+		return
+	}
+
+	// check the book is checked out by the user
+	if !book.ContainsUser(user) {
+		return &errors.NotCheckedOutError{}
+	}
+
+	// update the book and the user to reflect that the user has checked in the book
+	if err = user.RemoveCheckedOutBook(book); err != nil {
+		return
+	}
+	if err = book.RemoveUser(user); err != nil {
+		return
+	}
+
+	if err = l.updateUser(user, user); err != nil {
+		 return
+	}
+	if err = l.updateBook(book, book); err != nil {
+		return
+	}
+
+	return
 }
 
 // AddBooks adds new stock of a book to the library.
@@ -180,7 +243,7 @@ func (l *Librarian) AddBooks(title string, author string, stock int) (err error)
 	// first check we are a senior librarian and have the
 	// authorisation needed.
 	if l.Role != Senior {
-		err = &PermissionDeniedError{Role: l.Role}
+		err = &errors.PermissionDeniedError{Role: l.Role}
 		return
 	}
 
@@ -219,7 +282,7 @@ func (l *Librarian) RemoveBooks(title string, author string, stock int) (err err
 	// first check we are a senior librarian and have the
 	// authorisation needed.
 	if l.Role != Senior {
-		err = &PermissionDeniedError{Role: l.Role}
+		err = &errors.PermissionDeniedError{Role: l.Role}
 		return
 	}
 
@@ -234,7 +297,7 @@ func (l *Librarian) RemoveBooks(title string, author string, stock int) (err err
 
 	// check we have enough copies to remove
 	if (book.Copies - stock) < 0 {
-		err = &NotEnoughCopiesError{}
+		err = &errors.NotEnoughCopiesError{}
 		return
 	}
 

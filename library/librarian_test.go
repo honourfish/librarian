@@ -8,11 +8,13 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/jinzhu/copier"
 
 	"librarian/library/data"
 	"librarian/library/mocks"
+	"librarian/library/errors"
 )
 
 var (
@@ -161,7 +163,7 @@ func TestAddBooks(t *testing.T){
 			nil, // update error
 
 			// expected error
-			&PermissionDeniedError{Role: "Librarian"},
+			&errors.PermissionDeniedError{Role: "Librarian"},
 		},
 	}
 
@@ -345,7 +347,7 @@ func TestRemoveBooks(t *testing.T){
 			nil, // update error
 
 			// expected error
-			&NotEnoughCopiesError{},
+			&errors.NotEnoughCopiesError{},
 		},
 		{
 			"librarian denied",
@@ -364,7 +366,7 @@ func TestRemoveBooks(t *testing.T){
 			nil, // update error
 
 			// expected error
-			&PermissionDeniedError{Role: "Librarian"},
+			&errors.PermissionDeniedError{Role: "Librarian"},
 		},
 	}
 
@@ -385,6 +387,257 @@ func TestRemoveBooks(t *testing.T){
 			actual := table.librarian.RemoveBooks(table.title, table.author, table.stock)
 
 			assert.Equal(t, actual, table.expected, "error returned not the same as eexpppected")
+		})
+	}
+}
+
+// TestCheckout tests Librarian.Checkout in the following ways:
+//
+// 1. a senior librarian attempts to checkout a book to a registered user, successfully.
+// 2. a normal librarian attempts to checkout a book to a registered user, successfully.
+// 3. a normal librarian attempts to checkout a book to a non registered user, unsuccessfully.
+// 4. a normal librarian attempts to checkout a non existing book to a registered user, unsuccessfully.
+// 5. a normal librarian attempts to checkout a book that has all its copies checkout out already to a registered user, unsuccessfully.
+// 6. a normal librarian attempts to checkout a book to a registered user, but the user update fails.
+// 7. a normal librarian attempts to checkout a book to a registered user, but the book update fails.
+func TestCheckOut(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		title string
+		author string
+		username string
+
+		// Persister stuff
+		retrieve_book data.Book
+		retrieve_user data.User
+
+		retrieve_book_err error
+		update_book_err error
+		retrieve_user_err error
+		update_user_err error
+
+		expected error
+	}{
+		{
+			"senior checkout successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+			}, // retrieve book
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal checkout successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+			}, // retrieve book
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal non registered user",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+			}, // retrieve book
+
+			data.User{}, // retrieve user
+
+			nil, // retrieve book error
+			MockErr, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal non existent book",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{}, // retrieve book
+
+			data.User{}, // retrieve user
+
+			MockErr, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal all checked out",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 1, // only 1 copy of the book available
+				Users: []*primitive.ObjectID{nil}, // 1 book checked out
+			}, // retrieve book
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			&errors.NotEnoughCopiesError{},
+		},
+		{
+			"normal user update failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 1, 
+			}, // retrieve book
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			MockErr, // retrieve user error
+			nil, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal book update failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+			"Phil", // username
+
+			data.Book{
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 1, 
+			}, // retrieve book
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // retrieve book error
+			nil, // retrieve user error
+			MockErr, // update book error
+			nil, // update user error
+
+			// expected error
+			MockErr,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// mock stuff
+			table.librarian.Persister.(*mocks.MockPersister).On("Update", "books", mock.Anything, mock.Anything).Return(table.update_book_err)
+			table.librarian.Persister.(*mocks.MockPersister).On("Update", "users", mock.Anything, mock.Anything).Return(table.update_user_err)
+
+			// mock persister retrieve, to return table.retrieve_book in as the result arg
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "books", mock.Anything, mock.Anything).Return(table.retrieve_book_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.Book)
+				copier.Copy(arg, &table.retrieve_book)
+			})
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "users", mock.Anything, mock.Anything).Return(table.retrieve_user_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.User)
+				copier.Copy(arg, &table.retrieve_user)
+			})
+
+			actual := table.librarian.CheckOut(table.title, table.author, table.username)
+
+			assert.Equal(t, table.expected, actual, "error returned not the same as expected")
 		})
 	}
 }
