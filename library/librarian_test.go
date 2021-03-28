@@ -1372,3 +1372,91 @@ func TestAddUser(t *testing.T){
 		})
 	}
 }
+
+// TestRemoveUser tests Librarian.RemoveUser in the following ways:
+//
+// 1. a senior librarian attempts to remove an existing user successfully.
+// 2. a normal librarian attempts to remove an existing user successfully.
+// 3. a normal librarian attempts to remove a non existing user unsuccessfully.
+// 4. a normal librarian attempts to remove an existing user, but remove user fails.
+func TestRemoveUser(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		username string
+
+		delete_err error
+
+		expected error
+	}{
+		{
+			"senior remove successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			nil, // delete error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal remove successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			nil, // delete error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal user doesn't exist",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			mongo.ErrNoDocuments, // delete error
+
+			// expected error
+			&errors.UserDoesNotExistError{},
+		},
+		{
+			"normal user delete failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			MockErr, // delete error
+
+			// expected error
+			MockErr,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// assume we have passed a mock persister to librarian
+			table.librarian.Persister.(*mocks.MockPersister).On("Delete", "users", mock.Anything).Return(table.delete_err)
+
+			actual := table.librarian.RemoveUser(table.username)
+
+			assert.Equal(t, actual, table.expected, "error returned not the same as expected")
+		})
+	}
+}
