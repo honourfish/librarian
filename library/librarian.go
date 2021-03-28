@@ -392,3 +392,18 @@ func (l *Librarian) RemoveUser(username string) (err error) {
 
 	return
 }
+
+// User gets the given user (if any) from persistent storage.
+func (l *Librarian) User(username string) (user *data.User, err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	user, err = l.user(username)
+
+	// can't find the user
+	if err == mongo.ErrNoDocuments {
+		return nil, &errors.UserDoesNotExistError{}
+	}
+
+	return
+}

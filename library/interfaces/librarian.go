@@ -1,11 +1,18 @@
 package interfaces
 
+import (
+	"librarian/library/data"
+)
+
 type Librarian interface {
 	// AddUser adds a new user to the registered users.
 	AddUser(name string, username string) error
 
 	// RemoveUser removes an existing user from the registered users.
 	RemoveUser(username string) error
+
+	// User gets the given user (if any) from persistent storage.
+	User(username string) (*data.User, error)	
 
 	// CheckIn checks a lent book, back into the library.
 	CheckIn(title string, author string, username string) error
