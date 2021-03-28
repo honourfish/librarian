@@ -952,3 +952,174 @@ func TestCheckIn(t *testing.T){
 		})
 	}
 }
+
+// TestInStock tests Librarian.InStock in the following ways:
+//
+// 1. a senior librarian attempts to check stock of a book with multiple copies, but none checked out, successfully and returns true.
+// 2. a normal librarian attempts to check stock of a book with multiple copies, but none checked out, successfully and returns true.
+// 3. a normal librarian attempts to check stock of a book with no copies and none checked out, successfully and returns false.
+// 4. a normal librarian attempts to check stock of a book with multiple copies and all checked out, successfully and returns false.
+// 5. a normal librarian attempts to check stock of a book but retrieving the book fails and returns false.
+func TestInStock(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		title string
+		author string
+
+		// Persister stuff
+		retrieve_book data.Book
+
+		retrieve_book_err error
+
+		expected bool
+		expected_err error
+	}{
+		{
+			"senior in stock successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			true,
+			nil,
+		},
+		{
+			"normal in stock successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 10,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+				},
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			true,
+			nil,
+		},
+		{
+			"normal no copies",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 0,
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			false,
+			nil,
+		},
+		{
+			"normal all checked out",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 2,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+					NewObjectID(3),
+				},
+			}, // retrieve book
+
+			nil, // retrieve book error
+
+			// expected
+			false,
+			nil,
+		},
+		{
+			"normal retrieve book failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Harry Potter", // title
+			"J.K. Rowling", // author
+
+			data.Book{
+				ID: NewObjectID(1),
+				Title: "Harry Potter",
+				Author: "J.K. Rowling",
+				Copies: 4,
+				Users: []primitive.ObjectID{
+					NewObjectID(2),
+					NewObjectID(3),
+				},
+			}, // retrieve book
+
+			MockErr, // retrieve book error
+
+			// expected
+			false,
+			MockErr,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// mock persister retrieve, to return table.retrieve_book in as the result arg
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "books", mock.Anything, mock.Anything).Return(table.retrieve_book_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.Book)
+				copier.Copy(arg, &table.retrieve_book)
+			})
+
+			actual, actual_err := table.librarian.InStock(table.title, table.author)
+
+			assert.Equal(t, table.expected, actual, "bool returned not the same as expected")
+			assert.Equal(t, table.expected_err, actual_err, "error returned not the same as expected")
+		})
+	}
+}
