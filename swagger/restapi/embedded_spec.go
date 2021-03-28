@@ -218,6 +218,31 @@ func init() {
       }
     },
     "/librarian/{username}/user/{user}": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "delete a user by their username",
         "parameters": [
@@ -473,6 +498,31 @@ func init() {
       }
     },
     "/librarian/{username}/user/{user}": {
+      "get": {
+        "summary": "request a book by its title",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieved",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "delete a user by their username",
         "parameters": [

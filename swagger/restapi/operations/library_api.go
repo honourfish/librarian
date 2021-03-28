@@ -57,6 +57,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		GetBookTitleHandler: GetBookTitleHandlerFunc(func(params GetBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetBookTitle has not yet been implemented")
 		}),
+		GetLibrarianUsernameUserUserHandler: GetLibrarianUsernameUserUserHandlerFunc(func(params GetLibrarianUsernameUserUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetLibrarianUsernameUserUser has not yet been implemented")
+		}),
 		PostBookHandler: PostBookHandlerFunc(func(params PostBookParams) middleware.Responder {
 			return middleware.NotImplemented("operation PostBook has not yet been implemented")
 		}),
@@ -115,6 +118,8 @@ type LibraryAPI struct {
 	GetBookHandler GetBookHandler
 	// GetBookTitleHandler sets the operation handler for the get book title operation
 	GetBookTitleHandler GetBookTitleHandler
+	// GetLibrarianUsernameUserUserHandler sets the operation handler for the get librarian username user user operation
+	GetLibrarianUsernameUserUserHandler GetLibrarianUsernameUserUserHandler
 	// PostBookHandler sets the operation handler for the post book operation
 	PostBookHandler PostBookHandler
 	// PostLibrarianUsernameBookHandler sets the operation handler for the post librarian username book operation
@@ -214,6 +219,9 @@ func (o *LibraryAPI) Validate() error {
 	}
 	if o.GetBookTitleHandler == nil {
 		unregistered = append(unregistered, "GetBookTitleHandler")
+	}
+	if o.GetLibrarianUsernameUserUserHandler == nil {
+		unregistered = append(unregistered, "GetLibrarianUsernameUserUserHandler")
 	}
 	if o.PostBookHandler == nil {
 		unregistered = append(unregistered, "PostBookHandler")
@@ -335,6 +343,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/book/{title}"] = NewGetBookTitle(o.context, o.GetBookTitleHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/librarian/{username}/user/{user}"] = NewGetLibrarianUsernameUserUser(o.context, o.GetLibrarianUsernameUserUserHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

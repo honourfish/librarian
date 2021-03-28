@@ -29,6 +29,26 @@ paths:
           description: Created
 
   /librarian/{username}/user/{user}:
+
+    get:
+      summary: "request a book by its title"
+
+      parameters:
+        - in: path
+          name: username
+          required: true
+          type: string
+        - in: path
+          name: user
+          required: true
+          type: string
+
+      responses:
+        '200':
+          description: Retrieved
+          schema:
+            $ref: '#/definitions/User'
+  
     delete:
       summary: "delete a user by their username"
 
