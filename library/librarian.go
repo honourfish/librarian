@@ -121,6 +121,18 @@ func (l *Librarian) addUser(user *data.User) (err error) {
 	return err
 }
 
+// removeUser removes a user found with a filter on the usename.
+func (l *Librarian) removeUser(username string) (err error) {
+
+	filter := bson.D{{"username", username}}
+
+	if err = l.Persister.Delete("users", filter); err != nil {
+		return
+	}
+
+	return
+}
+
 // inStock checks if a book is currently in stock.
 // Not atomic.
 func (l *Librarian) inStock(title string, author string) (bool, error) {
@@ -330,5 +342,53 @@ func (l *Librarian) RemoveBooks(title string, author string, stock int) (err err
 		return
 	}
 	
+	return
+}
+
+// AddUser adds a new user to the registered users.
+func (l *Librarian) AddUser(name string, username string) (err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	// attempt to get the user to see if it already exists
+	var user *data.User
+	user, err = l.user(username)
+
+	// user already exists
+	if err == nil {
+		return &errors.UserAlreadyExistsError{}
+	}
+
+	// retrieving user error
+	if err != mongo.ErrNoDocuments {
+		return
+	}
+
+	user.Name = name
+	user.Username = username
+
+	if err = l.addUser(user); err != nil {
+		return
+	}
+
+	return
+}
+
+// RemoveUser removes an existing user from the registered users.
+func (l *Librarian) RemoveUser(username string) (err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+	
+	err = l.removeUser(username)
+
+	if err == mongo.ErrNoDocuments {
+		return &errors.UserDoesNotExistError{}
+	}
+
+	// other error unreleated to user not existing
+	if err != nil {
+		return
+	}
+
 	return
 }

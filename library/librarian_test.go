@@ -1242,3 +1242,133 @@ func TestStock(t *testing.T){
 		})
 	}
 }
+
+// TestAddUser tests Librarian.AddUser in the following ways:
+//
+// 1. a senior librarian attempts to add a new user successfully.
+// 2. a normal librarian attempts to add a new user successfully.
+// 3. a normal librarian attempts to add an existing user unsuccessfully.
+// 4. a normal librarian attempts to add a new user, but retrieve user fails.
+// 5. a normal librarian attempts to add a new user, but add user fails.
+func TestAddUser(t *testing.T){
+
+	tables := []struct {
+		subtest string
+		librarian Librarian
+		username string
+
+		// Persister stuff
+		retrieve_user data.User
+
+		create_err error
+		retrieve_err error
+
+		expected error
+	}{
+		{
+			"senior create successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Senior",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			data.User{}, // retrieve user
+
+			nil, // create error
+			mongo.ErrNoDocuments, // retrieve error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal create successful",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			data.User{}, // retrieve user
+
+			nil, // create error
+			mongo.ErrNoDocuments, // retrieve error
+
+			// expected error
+			nil,
+		},
+		{
+			"normal existing user",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			data.User{
+				Username: "Phil",
+			}, // retrieve user
+
+			nil, // create error
+			nil, // retrieve error
+
+			// expected error
+			&errors.UserAlreadyExistsError{},
+		},
+		{
+			"normal retrieve failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			data.User{}, // retrieve user
+
+			nil, // create error
+			MockErr, // retrieve error
+
+			// expected error
+			MockErr,
+		},
+		{
+			"normal create failed",
+			Librarian{
+				Name: "Janice",
+				Role: "Librarian",
+				Persister: &mocks.MockPersister{},
+			},
+			"Phil", // username
+
+			data.User{}, // retrieve user
+
+			MockErr, // create error
+			mongo.ErrNoDocuments, // retrieve error
+
+			// expected error
+			MockErr,
+		},
+	}
+
+	for _, table := range tables {
+		t.Run(table.subtest, func(t *testing.T) {
+
+			// assume we have passed a mock persister to librarian
+			table.librarian.Persister.(*mocks.MockPersister).On("Create", "users", mock.Anything).Return(table.create_err)
+	
+			// mock persister retrieve, to return table.retrieve_book in as the result arg
+			table.librarian.Persister.(*mocks.MockPersister).On("Retrieve", "users", mock.Anything, mock.Anything).Return(table.retrieve_err).Run(func(args mock.Arguments) {
+				arg := args.Get(2).(*data.User)
+				copier.Copy(arg, &table.retrieve_user)
+			})
+
+			actual := table.librarian.AddUser("Philly", table.username)
+
+			assert.Equal(t, actual, table.expected, "error returned not the same as expected")
+		})
+	}
+}
