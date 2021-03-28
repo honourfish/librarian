@@ -1,9 +1,5 @@
 package interfaces
 
-import (
-	"librarian/library/data"
-)
-
 type Librarian interface {
 	// AddUser adds a new user to the registered users.
 	AddUser(name string, username string) error
@@ -20,8 +16,9 @@ type Librarian interface {
 	// InStock checks if a book is currently in stock.
 	InStock(title string, author string) (bool, error)
 
-	// Stock gets the information about the stock of a book
-	Stock(title string, author string) (data.Book, error)
+	// Stock gets the information about the stock of a book.
+	// Returns total copies in the library (int), total currently checked out (int), error. 
+	Stock(title string, author string) (int, int, error)
 }
 
 type SeniorLibrarian interface {
