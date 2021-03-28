@@ -80,8 +80,8 @@ func theBookCanBeRetrieved() error {
 		return err
 	}
 
-	assert.Equal(&t, *response.Payload, *Book, "expected book and actual book are different")
-	return nil
+	assert.Equal(&t, *Book, *response.Payload, "expected book and actual book are different")
+	return t.err
 }
 
 // BeforeSuite creates a new http library client.
@@ -120,7 +120,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		}
 
 		// for now assume the first tag is book or user
-		if scenario.Tags[0].Name == "user" {
+		if scenario.Tags[0].Name == "@user" {
 			// delete the user after the test has run
 			params := operations.NewDeleteLibrarianUsernameUserUserParams()
 
@@ -148,4 +148,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a library with book "([^"]*)", author "([^"]*)" and copies (\d+)$`, aBookIsAddedWithTitleAuthorAndCopies)
 	ctx.Step(`^(\d+) more copies of the book are added$`, moreCopiesOfTheBookAreAdded)
 	ctx.Step(`^(\d+) copies of the book are removed$`, copiesOfTheBookAreRemoved)
+	ctx.Step(`^a library with no users$`, aLibraryWithNoUsers)
+	ctx.Step(`^a user is added with username "([^"]*)" and name "([^"]*)"$`, aUserIsAddedWithUsernameAndName)
+	ctx.Step(`^the user can be retrieved$`, theUserCanBeRetrieved)
 }

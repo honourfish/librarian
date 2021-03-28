@@ -1,6 +1,7 @@
 package library
 
 import (
+	"log"
 	"sync"
 	"time"
 
@@ -45,10 +46,12 @@ type Librarian struct {
 func (l *Librarian) book(title string, author string) (*data.Book, error) {
 	var book data.Book
 
-	filter := bson.D{{"title", title},{"author", author}}
+	filter := bson.M{"title":title, "author": author}
 
 	// attempt to get the book from persistent storage
 	err := l.Persister.Retrieve("books", filter, &book)
+
+	log.Printf("Get: %d", book.Copies)
 	return &book, err
 }
 
@@ -56,7 +59,8 @@ func (l *Librarian) book(title string, author string) (*data.Book, error) {
 //   title and author.
 func (l *Librarian) updateBook(old_book *data.Book, new_book *data.Book) (err error) {
 
-	filter := bson.D{{"title", old_book.Title},{"author", old_book.Author}}
+	log.Printf("updateBook: %d", new_book.Copies)
+	filter := bson.M{"title": old_book.Title, "author": old_book.Author}
 
 	if err = l.Persister.Update("books", filter, new_book); err != nil {
 		return
@@ -67,7 +71,7 @@ func (l *Librarian) updateBook(old_book *data.Book, new_book *data.Book) (err er
 
 // addBook adds a given book to persistent storage
 func (l *Librarian) addBook(book *data.Book) (err error) {
-
+	log.Printf("add copies: %d", book.Copies)
 	if err = l.Persister.Create("books", book); err != nil {
 		return err
 	}
@@ -78,7 +82,7 @@ func (l *Librarian) addBook(book *data.Book) (err error) {
 // removeBook removes a book found with a filter on the title and author.
 func (l *Librarian) removeBook(title string, author string) (err error) {
 
-	filter := bson.D{{"title", title},{"author", author}}
+	filter := bson.M{"title": title, "author": author}
 
 	if err = l.Persister.Delete("books", filter); err != nil {
 		return
@@ -91,7 +95,7 @@ func (l *Librarian) removeBook(title string, author string) (err error) {
 func (l *Librarian) user(username string) (*data.User, error) {
 	var user data.User
 
-	filter := bson.D{{"username", username}}
+	filter := bson.M{"username": username}
 
 	// attempt to get the book from persistent storage
 	err := l.Persister.Retrieve("users", filter, &user)
@@ -102,7 +106,7 @@ func (l *Librarian) user(username string) (*data.User, error) {
 //   username.
 func (l *Librarian) updateUser(old_user *data.User, new_user *data.User) (err error) {
 
-	filter := bson.D{{"username", old_user.Username}}
+	filter := bson.M{"username": old_user.Username}
 
 	if err = l.Persister.Update("users", filter, new_user); err != nil {
 		return
@@ -124,7 +128,7 @@ func (l *Librarian) addUser(user *data.User) (err error) {
 // removeUser removes a user found with a filter on the usename.
 func (l *Librarian) removeUser(username string) (err error) {
 
-	filter := bson.D{{"username", username}}
+	filter := bson.M{"username": username}
 
 	if err = l.Persister.Delete("users", filter); err != nil {
 		return
@@ -286,6 +290,7 @@ func (l *Librarian) AddBooks(title string, author string, stock int) (err error)
 		if err = l.addBook(book); err != nil {
 			return
 		}
+		return
 	}
 
 	// check there are no other errors getting the book
@@ -334,6 +339,7 @@ func (l *Librarian) RemoveBooks(title string, author string, stock int) (err err
 		if err = l.removeBook(title, author); err != nil {
 			return
 		}
+		return
 	}
 
 	// otherwise just reduce the number of copies accordingly

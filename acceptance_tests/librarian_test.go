@@ -7,11 +7,10 @@ import (
 	"librarian/client/models"
 
 	"librarian/library"
-	"librarian/library/data"
 )
 
 var Librarian library.Librarian
-var User *data.User
+var User *models.User
 
 func aLibrarianWithUsername(role, username string) error {
 	// for now assume one exists
@@ -78,5 +77,45 @@ func copiesOfTheBookAreRemoved(copies int) error {
 // theBookHasCopies assumes the book has already been retrieved and stored in the global 'Book'.
 func theBookHasCopies(copies int) error {
 	assert.Equal(&t, int64(copies), Book.Copies, "copies are not equal")
+	return t.err
+}
+
+func aLibraryWithNoUsers() error {
+	// assume the test starts with no users
 	return nil
+}
+
+func aUserIsAddedWithUsernameAndName(username, name string) error {
+	// use default constuctor to set the default request timeout
+	params := operations.NewPostLibrarianUsernameUserParams()
+
+	User = &models.User {
+		Name: name,
+		Username: username,
+	}
+
+	params.Username = Librarian.Username
+	params.User = User
+
+	if _, err := HttpClient.Operations.PostLibrarianUsernameUser(params); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func theUserCanBeRetrieved() error {
+	// use default constuctor to set the default request timeout
+	params := operations.NewGetLibrarianUsernameUserUserParams()
+
+	params.Username = Librarian.Username
+	params.User = User.Username
+
+	response, err := HttpClient.Operations.GetLibrarianUsernameUserUser(params)
+	if err != nil {
+		return err
+	}
+
+	assert.Equal(&t, *User, *response.Payload, "expected user and actual user are different")
+	return t.err
 }
