@@ -1,6 +1,7 @@
 package library
 
 import (
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -35,6 +36,9 @@ type Librarian struct {
 	// Persister is the persister used to add users
 	//   and books to persistant storage.
 	Persister interfaces.Persister
+
+	// mutex is the RW lock
+	mutex sync.RWMutex
 }
 
 // book gets the given book (if any) from persistent storage.
@@ -134,15 +138,19 @@ func (l *Librarian) inStock(title string, author string) (bool, error) {
 }
 
 // InStock checks if a book is currently in stock.
-// Todo: make public method atomic.
 func (l *Librarian) InStock(title string, author string) (bool, error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
 	return l.inStock(title, author)
 }
 
 // Stock gets the current stock information about a book
 func (l *Librarian) Stock(title string, author string) (copies int, checked_out int, err error) {
-	var book *data.Book
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
+	var book *data.Book
 	book, err = l.book(title, author)
 	if err != nil {
 		return
@@ -155,6 +163,8 @@ func (l *Librarian) Stock(title string, author string) (copies int, checked_out 
 
 // CheckOut checks a book in the library out.
 func (l *Librarian) CheckOut(title string, author string, username string) error {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
 	// first check the book is in stock
 	isAvailable, err := l.inStock(title, author)
@@ -201,6 +211,8 @@ func (l *Librarian) CheckOut(title string, author string, username string) error
 
 // CheckIn checks a book back into the library.
 func (l *Librarian) CheckIn(title string, author string, username string) (err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
 	// get user
 	var user *data.User
@@ -239,6 +251,8 @@ func (l *Librarian) CheckIn(title string, author string, username string) (err e
 
 // AddBooks adds new stock of a book to the library.
 func (l *Librarian) AddBooks(title string, author string, stock int) (err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
 	// first check we are a senior librarian and have the
 	// authorisation needed.
@@ -278,6 +292,8 @@ func (l *Librarian) AddBooks(title string, author string, stock int) (err error)
 
 // RemoveBooks removes stock of a book from the library.
 func (l *Librarian) RemoveBooks(title string, author string, stock int) (err error) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
 
 	// first check we are a senior librarian and have the
 	// authorisation needed.
