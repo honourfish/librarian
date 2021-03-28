@@ -125,4 +125,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a library with user username "([^"]*)" and name "([^"]*)"$`, aLibraryWithUserUsernameAndName)
 	ctx.Step(`^the checked out copies of the book is (\d+)$`, theCheckedOutCopiesOfTheBookIs)
 	ctx.Step(`^the user checks out the book$`, theUserChecksOutTheBook)
+	ctx.Step(`^the user checks in the book$`, theUserChecksInTheBook)
 }

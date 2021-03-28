@@ -106,8 +106,6 @@ func (bh *BookHandler) HandleDeleteBookTitle(params operations.DeleteBookTitlePa
 
 	filter := bson.D{{"title", params.Title}}
 
-	log.Println(params.Title)
-
 	if err := bh.Persister.Delete("books", filter); err != nil {
 		log.Println(err)
 		return operations.NewDeleteBookTitleOK()

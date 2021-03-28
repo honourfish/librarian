@@ -75,6 +75,9 @@ func NewLibraryAPI(spec *loads.Document) *LibraryAPI {
 		PutBookTitleHandler: PutBookTitleHandlerFunc(func(params PutBookTitleParams) middleware.Responder {
 			return middleware.NotImplemented("operation PutBookTitle has not yet been implemented")
 		}),
+		PutLibrarianUsernameUserUserCheckinHandler: PutLibrarianUsernameUserUserCheckinHandlerFunc(func(params PutLibrarianUsernameUserUserCheckinParams) middleware.Responder {
+			return middleware.NotImplemented("operation PutLibrarianUsernameUserUserCheckin has not yet been implemented")
+		}),
 		PutLibrarianUsernameUserUserCheckoutHandler: PutLibrarianUsernameUserUserCheckoutHandlerFunc(func(params PutLibrarianUsernameUserUserCheckoutParams) middleware.Responder {
 			return middleware.NotImplemented("operation PutLibrarianUsernameUserUserCheckout has not yet been implemented")
 		}),
@@ -136,6 +139,8 @@ type LibraryAPI struct {
 	PostLibrarianUsernameUserHandler PostLibrarianUsernameUserHandler
 	// PutBookTitleHandler sets the operation handler for the put book title operation
 	PutBookTitleHandler PutBookTitleHandler
+	// PutLibrarianUsernameUserUserCheckinHandler sets the operation handler for the put librarian username user user checkin operation
+	PutLibrarianUsernameUserUserCheckinHandler PutLibrarianUsernameUserUserCheckinHandler
 	// PutLibrarianUsernameUserUserCheckoutHandler sets the operation handler for the put librarian username user user checkout operation
 	PutLibrarianUsernameUserUserCheckoutHandler PutLibrarianUsernameUserUserCheckoutHandler
 
@@ -247,6 +252,9 @@ func (o *LibraryAPI) Validate() error {
 	}
 	if o.PutBookTitleHandler == nil {
 		unregistered = append(unregistered, "PutBookTitleHandler")
+	}
+	if o.PutLibrarianUsernameUserUserCheckinHandler == nil {
+		unregistered = append(unregistered, "PutLibrarianUsernameUserUserCheckinHandler")
 	}
 	if o.PutLibrarianUsernameUserUserCheckoutHandler == nil {
 		unregistered = append(unregistered, "PutLibrarianUsernameUserUserCheckoutHandler")
@@ -383,6 +391,10 @@ func (o *LibraryAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/book/{title}"] = NewPutBookTitle(o.context, o.PutBookTitleHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/librarian/{username}/user/{user}/checkin"] = NewPutLibrarianUsernameUserUserCheckin(o.context, o.PutLibrarianUsernameUserUserCheckinHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

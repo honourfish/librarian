@@ -317,6 +317,52 @@ func init() {
         }
       }
     },
+    "/librarian/{username}/user/{user}/checkin": {
+      "put": {
+        "summary": "request a book to be checked in by a user",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "author"
+              ],
+              "properties": {
+                "author": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/librarian/{username}/user/{user}/checkout": {
       "put": {
         "summary": "request a book to be checked out by a user",
@@ -702,6 +748,52 @@ func init() {
         "responses": {
           "200": {
             "description": "Deleted"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/librarian/{username}/user/{user}/checkin": {
+      "put": {
+        "summary": "request a book to be checked in by a user",
+        "parameters": [
+          {
+            "name": "book",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "author"
+              ],
+              "properties": {
+                "author": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "user",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
           },
           "404": {
             "description": "Not Found"

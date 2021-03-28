@@ -154,3 +154,26 @@ func (lh *LibrarianHandler) HandlePutCheckOut(params operations.PutLibrarianUser
 
 	return operations.NewPutLibrarianUsernameUserUserCheckoutOK()
 }
+
+// HandlePutCheckIn is the handler for put request for the endpoint /librarian/{username}/user/{user}/checkin
+func (lh *LibrarianHandler) HandlePutCheckIn(params operations.PutLibrarianUsernameUserUserCheckinParams) middleware.Responder {
+
+	// get the librarian
+	filter := bson.M{"username": params.Username}
+
+	var librarian library.Librarian
+	if err := lh.Persister.Retrieve("librarians", filter, &librarian); err != nil {
+		log.Println(err)
+		return operations.NewPutLibrarianUsernameUserUserCheckinNotFound()
+	}
+	
+	// ensure the librarian has a valid persister
+	librarian.Persister = lh.Persister
+
+	if err := librarian.CheckIn(*params.Book.Title, *params.Book.Author, params.User); err != nil {
+		log.Println(err)
+		return operations.NewPutLibrarianUsernameUserUserCheckinNotFound()
+	}
+
+	return operations.NewPutLibrarianUsernameUserUserCheckinOK()
+}

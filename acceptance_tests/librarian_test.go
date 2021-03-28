@@ -159,3 +159,23 @@ func theUserChecksOutTheBook() error {
 
 	return nil
 }
+
+func theUserChecksInTheBook() error {
+	// use default constuctor to set the default request timeout
+	params := operations.NewPutLibrarianUsernameUserUserCheckinParams()
+
+	bookObj := operations.PutLibrarianUsernameUserUserCheckinBody {
+		Title: &Book.Title,
+		Author: &Book.Author,
+	}
+
+	params.Username = Librarian.Username
+	params.User = User.Username
+	params.Book = bookObj
+
+	if _, err := HttpClient.Operations.PutLibrarianUsernameUserUserCheckin(params); err != nil {
+		return err
+	}
+
+	return nil
+}
