@@ -10,6 +10,42 @@ schemes:
   - http
 paths:
 
+  /librarian/{username}/user:
+    post:
+      summary: "request a user be added to the library"
+
+      parameters:
+        - in: body
+          name: user
+          schema:
+            $ref: '#/definitions/User'
+        - in: path
+          name: username
+          type: string
+          required: true
+
+      responses:
+        '201':
+          description: Created
+
+  /librarian/{username}/user/{user}:
+    delete:
+      summary: "delete a user by their username"
+
+      parameters:
+        - in: path
+          name: username
+          type: string
+          required: true
+        - in: path
+          name: user
+          type: string
+          required: true
+
+      responses:
+        '200':
+          description: Deleted
+
   /librarian/{username}/book:
     post:
       summary: "request a book be added to the library"
@@ -140,5 +176,12 @@ definitions:
           type: string
         copies:
           type: integer
-        
+    User:
+      description: A JSON object containing user information
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
         

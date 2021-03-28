@@ -50,11 +50,17 @@ func main() {
 	api.DeleteBookTitleHandler = operations.DeleteBookTitleHandlerFunc(bookHandler.HandleDeleteBookTitle)
 
 	// /librarian/{username}/book handlers
-	librarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
+	seniorLibrarianHandler := handlers.SeniorLibrarianHandler{Persister: mongoDb}
 
-	api.PostLibrarianUsernameBookHandler = operations.PostLibrarianUsernameBookHandlerFunc(librarianHandler.HandlePostBook)
-	api.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler = operations.DeleteLibrarianUsernameBookTitleAuthorCopiesHandlerFunc(librarianHandler.HandleDeleteBook)
+	api.PostLibrarianUsernameBookHandler = operations.PostLibrarianUsernameBookHandlerFunc(seniorLibrarianHandler.HandlePostBook)
+	api.DeleteLibrarianUsernameBookTitleAuthorCopiesHandler = operations.DeleteLibrarianUsernameBookTitleAuthorCopiesHandlerFunc(seniorLibrarianHandler.HandleDeleteBook)
 
+	// /librarian/{username}/user handlers
+	librarianHandler := handlers.LibrarianHandler{Persister: mongoDb}
+
+	api.PostLibrarianUsernameUserHandler = operations.PostLibrarianUsernameUserHandlerFunc(librarianHandler.HandlePostUser)
+	api.DeleteLibrarianUsernameUserUserHandler = operations.DeleteLibrarianUsernameUserUserHandlerFunc(librarianHandler.HandleDeleteUser)
+	
 	if err = server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
