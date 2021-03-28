@@ -31,6 +31,16 @@ to generate the client run:
 swagger generate client --target=./client --spec=./swagger/swagger.yml --name library
 ```
 
+## Automated testing:
+
+first goto `acceptance_test` directory then:
+
+```
+godog -c 0
+```
+
+N.B. we have to turn concurrent scenario execution off.
+
 ## Manual testing
 
 Post:
