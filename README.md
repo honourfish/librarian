@@ -52,10 +52,14 @@ $> ./librarian
 ```
 
 3. Due to not implementing any Librarian management endpoints, we have to create a couple of librarians first:
-    a. head to the mongo db admin: `localhost:8081`
-    b. create a database (if one doesn't exist) called `library`
-    c. create a collection (if one doesn't exist) called `librarians`
-    d. create the librarians with the following attributes:
+
+a. head to the mongo db admin: `localhost:8081`
+
+b. create a database (if one doesn't exist) called `library`
+
+c. create a collection (if one doesn't exist) called `librarians`
+
+d. create the librarians with the following attributes:
 | role | username |
 |------|----------|
 | Senior | Janice |
